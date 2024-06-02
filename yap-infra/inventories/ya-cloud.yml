@@ -1,0 +1,5 @@
+cloud:
+  hosts:
+    prod1:
+      ansible_host: 158.160.151.53
+      ansible_user: aa1limonov

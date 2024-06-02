@@ -1,0 +1,12 @@
+postgresql_databases:
+  - name: yap
+    owner: yap
+  - name: yap-dev
+    owner: yap
+postgresql_users:
+  - name: yap
+    password: crackme
+    priv: all
+postgresql_global_config_options:
+  - option: listen_addresses
+    value: '*'

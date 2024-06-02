@@ -1,0 +1,7 @@
+---
+- import_playbook: deploy-docker.yml
+  tags: docker
+- import_playbook: deploy-pg.yml
+  tags: pg
+- import_playbook: deploy-minio.yml
+  tags: minio

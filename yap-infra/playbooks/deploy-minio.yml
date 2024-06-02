@@ -1,0 +1,8 @@
+---
+- name: "Install minio server"
+  hosts: all
+  become: yes
+  vars_files:
+    - ../vars/minio.yml
+  roles:
+    - atosatto.minio
