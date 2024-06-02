@@ -1,3 +1,6 @@
 minio_server_datadirs:
   - "/var/lib/minio-yap"
 minio_server_make_datadirs: true
+minio_server_env_extra: |
+  MINIO_ROOT_USER=yap
+  MINIO_ROOT_PASSWORD=uGNsMBMIv5

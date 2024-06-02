@@ -1,8 +1,5 @@
 ---
 - hosts: all
   become: yes
-  ignore_errors: true
-  vars_files:
-    - ../vars/pg.yml
   roles:
     - geerlingguy.docker
