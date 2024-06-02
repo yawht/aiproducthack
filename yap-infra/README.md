@@ -22,6 +22,9 @@ yc compute ssh certificate export \
     --directory ~/.ssh/yc
 
 ssh -i ~/.ssh/yc/<имя ключа> [логин в клауде]@158.160.151.53 # ip первой тачки
+
+# Если все ок - добавляем ключ в агента
+ssh-add ~/.ssh/yc/<имя ключа>
 ```
 
 ### Как налить инфру
