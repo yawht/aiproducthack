@@ -11,8 +11,8 @@ fixture just clones ready database.
 from http import HTTPStatus
 
 
-async def test_get(api_client):
-    response = await api_client.get("/api/generations")
+def test_get(api_client, migrated_postgres):
+    response = api_client.get("/api/generations")
     assert response.status_code == HTTPStatus.OK
 
     data = response.json()

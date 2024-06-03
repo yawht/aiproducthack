@@ -15,7 +15,7 @@ from yarl import URL
 from yap import __name__ as project_name
 
 
-PROJECT_PATH = Path(__file__).parent.resolve()
+PROJECT_PATH = Path(__file__).parent.parent.resolve()
 DEFAULT_PG_URL = "postgresql://user:crackme@localhost/yap"
 
 

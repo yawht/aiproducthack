@@ -12,7 +12,7 @@ import os
 
 from alembic.config import CommandLine
 
-from staff.utils import DEFAULT_PG_URL, make_alembic_config
+from yap.alembic.utils import DEFAULT_PG_URL, make_alembic_config
 
 
 def main():

@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import create_engine
 
-from yap.utils import alembic_config_from_url, tmp_database
+from yap.alembic.utils import alembic_config_from_url, tmp_database
 
 
 @pytest.fixture
@@ -9,7 +9,7 @@ def postgres(pg_url):
     """
     Creates empty temporary database.
     """
-    with tmp_database(pg_url, 'pytest') as tmp_url:
+    with tmp_database(pg_url, "pytest") as tmp_url:
         yield tmp_url
 
 

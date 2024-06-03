@@ -5,16 +5,17 @@ You may do changes in tables here, then execute
 `alembic revision --message="Your text" --autogenerate`
 """
 
+from datetime import datetime
+from typing import Optional
+import uuid
 from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 import enum
 
 from sqlalchemy import (
-    Column,
     DateTime,
-    Enum,
     MetaData,
-    Table,
     func,
 )
 
@@ -35,23 +36,27 @@ convention = {
 metadata = MetaData(naming_convention=convention)
 
 
-class Status(enum.Enum):
+class Base(DeclarativeBase):
+    pass
+
+
+class GenerationStatus(enum.Enum):
     created = "created"
     in_progress = "in_progress"
     finished = "finished"
     failed = "failed"
 
 
-generation_table = Table(
-    "generation",
-    metadata,
-    Column("uid", UUID, primary_key=True),
-    Column(
-        "status", Enum(Status, name="status"), nullable=False, default=Status.created
-    ),
-    Column("created_at", DateTime, nullable=False, default=func.now()),
-    Column("updated_at", DateTime, default=func.now(), onupdate=func.now()),
-    Column("finished_at", DateTime, default=func.now()),
-    # For non-normalized data, defined in app, for example input links
-    Column("metadata", JSONB, nullable=False, server_default="{}"),
-)
+class Generation(Base):
+    __tablename__ = "generation"
+
+    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=UUID)
+    status: Mapped[GenerationStatus]
+
+    created_at: Mapped[datetime] = mapped_column(default=func.now(), type_=DateTime)
+    updated_at: Mapped[datetime] = mapped_column(
+        default=func.now(), onupdate=func.now(), type_=DateTime
+    )
+    finished_at: Mapped[Optional[datetime]] = mapped_column(type_=DateTime)
+
+    meta: Mapped[dict] = mapped_column(nullable=False, server_default="{}", type_=JSONB)

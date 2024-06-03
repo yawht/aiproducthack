@@ -1,34 +1,17 @@
 from fastapi import FastAPI
-from datetime import datetime
-from yap.api import Generation
+from yap.router.generation import generation_router
 
 import uvicorn
-import uuid
 
 app = FastAPI()
 
 
 @app.get("/health")
-async def health():
+def health():
     return "OK"
 
 
-@app.get("/api/generations")
-async def generations() -> list[Generation]:
-    return [
-        Generation(
-            uid=uuid.uuid4(),
-            status="FINISHED",
-            created_at=datetime.now(),
-            updated_at=datetime.now(),
-            finished_at=datetime.now(),
-            metadata={
-                "model": "diffusion-imprinter",
-                "source_image": "https://our.cdn.io/sources/uuid_ex",
-                "result_image": "https://our.cdn.io/results/uuid_ex",
-            },
-        )
-    ]
+app.include_router(generation_router)
 
 
 def main():

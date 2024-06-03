@@ -26,7 +26,7 @@ test:
 	env/bin/pytest
 
 test-env-up:
-	@docker compose -f build/docker-compose.test.yml up -d
+	@docker-compose -f build/docker-compose.test.yml up -d
 
 test-env-down:
-	@docker compose -f build/docker-compose.test.yml down -v
+	@docker-compose -f build/docker-compose.test.yml down -v

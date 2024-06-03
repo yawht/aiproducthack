@@ -1,10 +1,10 @@
-from httpx import ASGITransport, AsyncClient
+from fastapi.testclient import TestClient
 import pytest
 from alembic.command import upgrade
 from yarl import URL
 
 from yap.main import app
-from yap.utils import alembic_config_from_url, tmp_database
+from yap.alembic.utils import alembic_config_from_url, tmp_database
 
 
 @pytest.fixture(scope="session")
@@ -33,6 +33,6 @@ def migrated_postgres(pg_url, migrated_postgres_template):
 
 
 @pytest.fixture
-async def api_client(migrated_postgres):
-    client = AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
+def api_client():
+    client = TestClient(app=app, base_url="http://test")
     yield client
