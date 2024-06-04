@@ -38,7 +38,7 @@ setup(
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Software Development",
     ],
-    python_requires=">3.11.*, <4",
+    python_requires=">=3.11",
     packages=find_packages(exclude=["tests"]),
     install_requires=load_requirements("requirements.txt"),
     extras_require={"dev": load_requirements("requirements.dev.txt")},

@@ -12,4 +12,7 @@ services:
       timeout: 5s
       retries: 3
     ports:
-      - 5432:5432
+      - "5432:5432"
+networks:
+  default:
+    driver: bridge

@@ -1,9 +1,12 @@
 from fastapi.testclient import TestClient
 import pytest
 from alembic.command import upgrade
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from yarl import URL
 
 from yap.main import app
+from yap.orm import get_db
 from yap.alembic.utils import alembic_config_from_url, tmp_database
 
 
@@ -33,6 +36,21 @@ def migrated_postgres(pg_url, migrated_postgres_template):
 
 
 @pytest.fixture
-def api_client():
+def orm_session(migrated_postgres):
+    engine = create_engine(migrated_postgres)
+    session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    db = session_factory()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@pytest.fixture
+def api_client(orm_session):
+    def get_db_wrapper():  # god bless generators
+        yield orm_session
+
+    app.dependency_overrides[get_db] = get_db_wrapper
     client = TestClient(app=app, base_url="http://test")
     yield client

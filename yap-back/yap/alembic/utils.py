@@ -16,7 +16,7 @@ from yap import __name__ as project_name
 
 
 PROJECT_PATH = Path(__file__).parent.parent.resolve()
-DEFAULT_PG_URL = "postgresql://user:crackme@localhost/yap"
+DEFAULT_PG_URL = "postgresql://user:crackme@localhost:5432/yap"
 
 
 def make_alembic_config(

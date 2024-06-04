@@ -6,15 +6,16 @@ You may do changes in tables here, then execute
 """
 
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 import uuid
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import UUID as PGUUID, JSONB
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 import enum
 
 from sqlalchemy import (
     DateTime,
+    ForeignKey,
     MetaData,
     func,
 )
@@ -50,13 +51,31 @@ class GenerationStatus(enum.Enum):
 class Generation(Base):
     __tablename__ = "generation"
 
-    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=UUID)
+    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=PGUUID)
     status: Mapped[GenerationStatus]
-
     created_at: Mapped[datetime] = mapped_column(default=func.now(), type_=DateTime)
-    updated_at: Mapped[datetime] = mapped_column(
-        default=func.now(), onupdate=func.now(), type_=DateTime
-    )
-    finished_at: Mapped[Optional[datetime]] = mapped_column(type_=DateTime)
-
     meta: Mapped[dict] = mapped_column(nullable=False, server_default="{}", type_=JSONB)
+
+    input_img_path: Mapped[str]
+    input_prompt: Mapped[Optional[str]]
+
+    results: Mapped[List["GenerationResult"]] = relationship(
+        back_populates="generation", cascade="all, delete-orphan"
+    )
+
+
+class GenerationResult(Base):
+    __tablename__ = "generation_result"
+
+    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=PGUUID)
+    started_at: Mapped[datetime] = mapped_column(type_=DateTime)
+    finished_at: Mapped[datetime] = mapped_column(default=func.now(), type_=DateTime)
+
+    img_path: Mapped[Optional[str]]
+    error: Mapped[Optional[str]]
+
+    generation_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("generation.uid"), type_=PGUUID
+    )
+
+    generation: Mapped["Generation"] = relationship(back_populates="results")
