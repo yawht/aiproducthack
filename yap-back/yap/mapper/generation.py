@@ -2,17 +2,13 @@ import yap.schema as orm
 from yap.router.api import Generation, GenerationResult
 
 
-def form_image_link(image_key: str) -> str:
-    return f"https://our.cdn.com/bucket/{image_key}"
-
-
 def map_generation_result_model(model: orm.GenerationResult) -> GenerationResult:
     return GenerationResult(
         uid=model.uid,
         started_at=model.started_at,
         finished_at=model.finished_at,
         error=model.error,
-        image_link=form_image_link(model.img_path),
+        image_link=model.image_link,
     )
 
 
