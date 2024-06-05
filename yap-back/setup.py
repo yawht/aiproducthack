@@ -46,6 +46,7 @@ setup(
         "console_scripts": [
             "{0}-api = {0}.main:main".format(module_name),
             "{0}-db = {0}.db:main".format(module_name),
+            "{0}-worker = {0}.jobs.worker:_main".format(module_name),
         ]
     },
     include_package_data=True,
