@@ -13,6 +13,12 @@ services:
       retries: 3
     ports:
       - "5432:5432"
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
 networks:
   default:
     driver: bridge

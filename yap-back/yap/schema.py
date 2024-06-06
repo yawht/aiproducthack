@@ -51,7 +51,7 @@ class GenerationStatus(enum.Enum):
 class Generation(Base):
     __tablename__ = "generation"
 
-    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=PGUUID)
+    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=PGUUID, default=uuid.uuid4)
     status: Mapped[GenerationStatus]
     created_at: Mapped[datetime] = mapped_column(default=func.now(), type_=DateTime)
     meta: Mapped[dict] = mapped_column(nullable=False, server_default="{}", type_=JSONB)
@@ -63,11 +63,15 @@ class Generation(Base):
         back_populates="generation", cascade="all, delete-orphan"
     )
 
+    @property
+    def image_link(self) -> str:
+        return f"http://158.160.151.53:9091/{self.input_img_path}"
+
 
 class GenerationResult(Base):
     __tablename__ = "generation_result"
 
-    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=PGUUID)
+    uid: Mapped[uuid.UUID] = mapped_column(primary_key=True, type_=PGUUID, default=uuid.uuid4)
     started_at: Mapped[datetime] = mapped_column(type_=DateTime)
     finished_at: Mapped[datetime] = mapped_column(default=func.now(), type_=DateTime)
 
@@ -79,3 +83,7 @@ class GenerationResult(Base):
     )
 
     generation: Mapped["Generation"] = relationship(back_populates="results")
+
+    @property
+    def image_link(self) -> str:
+        return f"http://158.160.151.53:9091/{self.img_path}"
