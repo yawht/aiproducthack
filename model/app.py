@@ -58,6 +58,7 @@ MORE_INFO = """
 
 def generate(
     image,
+    description,
     positive_prompt,
     negative_prompt,
     seed,
@@ -76,7 +77,7 @@ def generate(
         'depth_map_blur_radius': depth_map_blur_radius,
     }
 
-    return replace_background(image, positive_prompt, negative_prompt, options)
+    return replace_background(image, description, positive_prompt, negative_prompt, options)
 
 
 custom_css = """
@@ -125,6 +126,11 @@ with gr.Blocks(css=custom_css) as iface:
             )
         with gr.Column(elem_id="params"):
             with gr.Tab('Prompts'):
+                description = gr.Textbox(
+                    label="Description",
+                    lines=3,
+                    value=""
+                )
                 positive_prompt = gr.Textbox(
                     label="Positive Prompt: describe what you'd like to see",
                     lines=3,
@@ -212,6 +218,7 @@ with gr.Blocks(css=custom_css) as iface:
         fn=generate,
         inputs=[
             image_upload,
+            description,
             positive_prompt,
             negative_prompt,
             seed,

@@ -9,7 +9,6 @@ from PIL import Image, ImageFilter
 from scipy.ndimage import binary_dilation
 import numpy as np
 
-from captioner import init as init_captioner, derive_caption
 from upscaler import init as init_upscaler
 from segmenter import init as init_segmenter, segment
 from depth_estimator import init as init_depth_estimator, get_depth_map
@@ -18,7 +17,6 @@ from image_utils import ensure_resolution, crop_centered
 
 developer_mode = os.getenv('DEV_MODE', False)
 
-init_captioner()
 init_upscaler()
 init_segmenter()
 init_depth_estimator()
@@ -34,6 +32,7 @@ MEGAPIXELS = 1.0
 
 def replace_background(
     original,
+    description,
     positive_prompt,
     negative_prompt,
     options,
@@ -41,14 +40,6 @@ def replace_background(
     pbar = tqdm(total=7)
 
     print("Original size:", original.size)
-
-    print("Captioning...")
-    caption = derive_caption(original)
-    pbar.update(1)
-
-    print("Caption:", caption)
-
-    torch.cuda.empty_cache()
 
     print(f"Ensuring resolution ({MEGAPIXELS}MP)...")
     resized = ensure_resolution(original, megapixels=MEGAPIXELS)
@@ -101,7 +92,7 @@ def replace_background(
 
     pbar.update(1)
 
-    final_positive_prompt = f"{caption}, {positive_prompt}, {POSITIVE_PROMPT_SUFFIX}"
+    final_positive_prompt = f"{description}, {positive_prompt}, {POSITIVE_PROMPT_SUFFIX}"
     final_negative_prompt = f"{negative_prompt}, {NEGATIVE_PROMPT_SUFFIX}"
 
     print("Final positive prompt:", final_positive_prompt)
@@ -146,7 +137,6 @@ def replace_background(
             composited_images,
             generated_images,
             pre_processing_images,
-            caption,
         ]
     else:
         return [composited_images, None, None, None]
