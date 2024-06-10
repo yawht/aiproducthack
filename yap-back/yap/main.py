@@ -1,5 +1,7 @@
+import os
 from fastapi import FastAPI
 from yap.router.generation import generation_router
+from pydantic_settings import BaseSettings
 
 import uvicorn
 

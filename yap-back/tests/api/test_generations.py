@@ -2,6 +2,7 @@ from datetime import datetime
 from http import HTTPStatus
 import uuid
 from yap.schema import Generation, GenerationResult, GenerationStatus
+from yap.router.api import CreateGenerationRequest
 
 
 def sample_generation() -> Generation:
@@ -32,3 +33,10 @@ def test_get(api_client, orm_session):
 
     data = response.json()
     assert len(data) == 1
+
+def test_create(api_client, orm_session, encoded_img: str):
+    res = api_client.post("/api/generations", json={'input_image': encoded_img})
+
+    assert res.status_code == 200
+    data = res.json()
+    assert data != None
