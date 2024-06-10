@@ -120,10 +120,6 @@ with gr.Blocks(css=custom_css) as iface:
                 type="pil",
                 elem_id="image-upload"
             )
-            caption = gr.Label(
-                label="Caption",
-                visible=developer_mode
-            )
         with gr.Column(elem_id="params"):
             with gr.Tab('Prompts'):
                 description = gr.Textbox(
@@ -229,8 +225,7 @@ with gr.Blocks(css=custom_css) as iface:
         outputs=[
             results,
             generated,
-            pre_processing,
-            caption
+            pre_processing
         ],
     )
 
