@@ -1,3 +1,4 @@
+from __future__ import annotations
 import torch
 from diffusers import (
     StableDiffusionXLControlNetPipeline,
@@ -5,7 +6,6 @@ from diffusers import (
     AutoencoderKL,
     UniPCMultistepScheduler,
 )
-from __future__ import annotations
 import cv2
 from typing import Optional
 
@@ -25,6 +25,7 @@ class ControlNet:
     ) -> None:
 
         if device == "cuda" and torch.cuda.is_available():
+            self.device = "cuda"
             self.dtype = torch.float16
         else:
             logging.warning("Using CPU for inference. This may be slow.")
