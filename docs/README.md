@@ -30,15 +30,23 @@ sequenceDiagram
     C4Context
     Container_Boundary(cb0, "Yap") {
         Container(yb, "Yap-back", "FastAPI", "Main backend for observing tasks")
+        
         Container(yw, "Yap-worker", "Celery", "Celery worker processing and generating images")
-        ContainerDb(pg, "DB", "PostgreSQL", "Holds generation and generation result data)
+    }
+
+    Container_Boundary(cb1, "Infra") {
+        ContainerDb(pg, "DB", "PostgreSQL", "Holds application data")
         
         ContainerDb(mi, "CDN", "minio", "Holds images used throughout the generation")
-        ContainerDb(mi, "CDN", "minio", "Holds images used throughout the generation")
 
-        Rel_R(yb, pg, "Uses", "TCP")
-        Rel_R(yb, pg, "Uses", "TCP")
-        Rel_D(yw, mi, "Uses", "HTTP")
-        Rel_D(yw, mi, "Uses", "HTTP")
+        ContainerDb(r, "Cache", "Redis", "Holds worker tasks and optional caching")
     }
+
+    Rel_R(yb, pg, "Uses", "TCP")
+    Rel_R(yb, pg, "Uses", "TCP")
+    Rel_R(yb, r, "Uses", "TCP")
+    Rel_R(yw, r, "Uses", "TCP")
+    Rel_D(yw, mi, "Uses", "HTTP")
+    Rel_D(yw, mi, "Uses", "HTTP")
+    
 ```
