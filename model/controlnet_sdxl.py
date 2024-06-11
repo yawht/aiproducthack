@@ -69,20 +69,11 @@ class ControlNet:
         guidance_scale: Optional[float] = 10.0,
     ) -> PIL_Image:
 
-        if controlnet_conditioning_scale is None:
-            controlnet_conditioning_scale = 1.0
-
-        if num_inference_steps is None:
-            num_inference_steps = 50
-
-        if guidance_scale is None:
-            guidance_scale = 5.0
-
-        arr = np.array(image)
-        arr = cv2.Canny(arr, 100, 200)
-        arr = arr[:, :, None]
-        arr = np.concatenate([arr, arr, arr], axis=2)
-        image = PIL.Image.fromarray(arr)
+        # arr = np.array(image)
+        # arr = cv2.Canny(arr, 100, 200)
+        # arr = arr[:, :, None]
+        # arr = np.concatenate([arr, arr, arr], axis=2)
+        # image = PIL.Image.fromarray(arr)
         generator = torch.manual_seed(seed)
 
         return self.pipe(
@@ -94,5 +85,5 @@ class ControlNet:
             num_inference_steps=num_inference_steps,
             guidance_scale=guidance_scale,
             generator=generator,
-        ).to_tuple()[0][0]
+        ).images
 
