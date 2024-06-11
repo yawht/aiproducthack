@@ -41,12 +41,10 @@ class BackgroundReplacer:
         depth_map_dilation_iterations: int,
         depth_map_blur_radius: int,
     ):
-        pbar = tqdm(total=7)
         logging.info(f"Original size: {image.size}")
 
         logging.info(f"Ensuring resolution ({self.megapixels}MP)...")
         resized = ensure_resolution(image, self.upscaler, megapixels=self.megapixels)
-        pbar.update(1)
 
         logging.info(f"Resized size: {resized.size}")
 
@@ -54,13 +52,11 @@ class BackgroundReplacer:
 
         logging.info("Segmenting...")
         [cropped, crop_mask] = self.segmenter.segment(resized)
-        pbar.update(1)
 
         torch.cuda.empty_cache()
 
         logging.info("Depth mapping...")
         depth_map = self.depth_estimator.get_depth_map(resized)
-        pbar.update(1)
 
         torch.cuda.empty_cache()
 
@@ -94,8 +90,6 @@ class BackgroundReplacer:
         # Convert back to PIL Image
         masked_depth_map = Image.fromarray(masked_depth_map_np).convert("RGB")
 
-        pbar.update(1)
-        pbar.close()
 
         return cropped, masked_depth_map
 
@@ -111,12 +105,16 @@ class BackgroundReplacer:
         depth_map_dilation_iterations: int = 10,
         depth_map_blur_radius: int = 10,
     ):
+        pbar = tqdm(total=3)
+        
         cropped, ready_image = self.preprocess(
             image,
             depth_map_feather_threshold=depth_map_feather_threshold,
             depth_map_dilation_iterations=depth_map_dilation_iterations,
             depth_map_blur_radius=depth_map_blur_radius,
         )
+        pbar.update(1)
+
         final_positive_prompt = (
             f"{description}, {positive_prompt}, {self.positive_prompt_suffix}"
         )
@@ -135,6 +133,7 @@ class BackgroundReplacer:
             seed=seed,
         )
         torch.cuda.empty_cache()
+        pbar.update(1)
 
         logging.info("Compositing...")
 
@@ -145,7 +144,9 @@ class BackgroundReplacer:
             )
             for generated_image in generated_images
         ]
+        pbar.update(1)
+        pbar.close()
 
         logging.info("Done!")
 
-        return composited_images
+        return [composited_images]
