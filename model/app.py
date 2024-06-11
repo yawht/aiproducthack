@@ -35,7 +35,7 @@ def generate(
     progress=gr.Progress(track_tqdm=True),
 ):
     if image is None:
-        return [None, None, None, None]
+        return [None]
 
     return replacer.replace_background(
         image,
