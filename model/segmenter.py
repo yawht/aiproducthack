@@ -35,6 +35,7 @@ class Segmenter:
         if device == "cuda" and not torch.cuda.is_available():
             logging.warn("CUDA is not available, using CPU...")
             device = "cpu"
+        self.device = device
         
         if not os.path.exists("saved_models"):
             os.mkdir("saved_models")
@@ -81,7 +82,7 @@ class Segmenter:
         self.hypar["model"] = self.ISNetDIS()
 
         # Build Model
-        self.net = self.build_model(device)
+        self.net = self.build_model()
 
         self.transform = transforms.Compose(
              [GOSNormalize(self.normalize, [0.5, 0.5, 0.5], [1.0, 1.0, 1.0])]
