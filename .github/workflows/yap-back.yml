@@ -1,0 +1,35 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: yap-back
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+        - 'yap-back/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+        - 'yap-back/**'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./yap-back
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Set up dev env
+      run: make devenv
+
+    - name: Test
+      run: make test-with-env
