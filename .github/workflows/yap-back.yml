@@ -28,5 +28,8 @@ jobs:
       with:
         python-version: '3.11'
 
+    - name: Set up dev env
+      run: make devenv
+
     - name: Test
       run: make test-with-env
