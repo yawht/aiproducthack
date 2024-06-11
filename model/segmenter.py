@@ -36,7 +36,7 @@ class Segmenter:
             logging.warn("CUDA is not available, using CPU...")
             device = "cpu"
         self.device = device
-        
+
         if not os.path.exists("saved_models"):
             os.mkdir("saved_models")
             os.mkdir("git")
@@ -152,7 +152,7 @@ class Segmenter:
 
     def segment(self, image: Image):
         image_tensor, orig_size = self.load_image(image)
-        mask = self.predict(image_tensor, orig_size, self.device)
+        mask = self.predict(image_tensor, orig_size)
 
         mask = Image.fromarray(mask).convert('L')
         im_rgb = image.convert("RGB")
