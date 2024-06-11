@@ -109,7 +109,7 @@ class BackgroundReplacer:
         num_inference_steps: int = 30,
         depth_map_feather_threshold: int = 128,
         depth_map_dilation_iterations: int = 10,
-        depth_map_blur_radius: int = 128,
+        depth_map_blur_radius: int = 10,
     ):
         cropped, ready_image = self.preprocess(
             image,
