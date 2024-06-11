@@ -25,21 +25,19 @@ def launch_generation(
     photo_repo: PhotoRepository = Depends(get_photo_repo),
     db: Session = Depends(get_db),
 ) -> Generation:
-    img_encoded = request.input_image.split('base64,')[1]
-    img_decoded = base64.b64decode(img_encoded)
+    img_decoded = base64.b64decode(request.input_image)
     image_uuid = uuid.uuid4()
 
-    res = photo_repo.upload_photo(YA_ART_SOURCE_BUCKET, image_uuid, 'jpeg', img_decoded)
+    res = photo_repo.upload_photo(YA_ART_SOURCE_BUCKET, str(image_uuid), 'jpeg', img_decoded)
     generation = schema.Generation(
         uid=uuid.uuid4(),
         status=schema.GenerationStatus.created,
         input_img_path=request.input_image,
         input_prompt=request.input_prompt,
     )
-    res: Generation
-    with session.begin() as session:
-        db.add(generation)
-        db.flush()
-        res = map_generation_model(db.query(schema.Generation).where(Generation.uid == generation.uid).one())
+    db.add(generation)
+    db.flush()
+    res = map_generation_model(db.query(schema.Generation).where(schema.Generation.uid == generation.uid).one())
+    db.commit()
 
     return res

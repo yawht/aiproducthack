@@ -14,7 +14,7 @@ def map_generation_result_model(model: orm.GenerationResult) -> GenerationResult
 
 def map_generation_model(model: orm.Generation) -> Generation:
     result_models = model.results
-    last_finished_res = max(result_models, key=lambda res: res.finished_at)
+    last_finished_res = max(result_models, key=lambda res: res.finished_at) if result_models else []
     return Generation(
         uid=model.uid,
         status=model.status,
