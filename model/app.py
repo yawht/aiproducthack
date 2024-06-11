@@ -160,4 +160,4 @@ with gr.Blocks(css=custom_css) as iface:
         outputs=[results],
     )
 
-iface.queue(api_open=False).launch(show_api=False)
+iface.queue(api_open=False).launch(show_api=False, share=True)
