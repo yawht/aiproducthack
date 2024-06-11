@@ -18,7 +18,7 @@ class ControlNet:
 
     def __init__(
         self,
-        controlnet_model_id: str = "diffusers/controlnet-canny-sdxl-1.0",
+        controlnet_model_id: str = "diffusers/controlnet-depth-sdxl-1.0",
         vae_model_id: str = "madebyollin/sdxl-vae-fp16-fix",
         base_model_id: str = "stabilityai/stable-diffusion-xl-base-1.0",
         device: str = "cuda"
@@ -36,12 +36,12 @@ class ControlNet:
             controlnet_model_id,
             use_safetensors=True,
             torch_dtype=self.dtype,
-        )
+        ).to(self.device)
 
         self.vae = AutoencoderKL.from_pretrained(
             vae_model_id,
             torch_dtype=self.dtype,
-        )
+        ).to(self.device)
 
         self.pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
             base_model_id,
