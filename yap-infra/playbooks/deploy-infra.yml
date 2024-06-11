@@ -5,3 +5,5 @@
   tags: pg
 - import_playbook: deploy-minio.yml
   tags: minio
+- import_playbook: deploy-redis.yml
+  tags: redis
