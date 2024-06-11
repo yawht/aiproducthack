@@ -2,7 +2,7 @@
 - hosts: all
   become: yes
   vars:
-    yap_api_tag: 9468886180
+    yap_api_tag: 9469276713
     yap_cr_path: cr.yandex/crpqi7c93korf1gmhgn1
     yap_api_image: "{{ yap_cr_path }}/yap/back"
     yap_cr_login: oauth
@@ -14,10 +14,23 @@
         username: "{{ yap_cr_login }}"
         password: "{{ yap_cr_pass }}"
         reauthorize: true
-    - name: Pull yap_api image
+    
+    - name: Pull yap image
       community.docker.docker_image_pull:
         name: "{{ yap_api_image }}"
         tag: "{{ yap_api_tag }}"
+
+    - name: Run migration
+      community.docker.docker_container:
+        name: yap_api_migrate_01
+        image: "{{ yap_api_image }}:{{ yap_api_tag }}"
+        state: started
+        restart: true
+        network_mode: host
+        command: yap-db upgrade head
+        env: # see yap_back/yap/settings.py
+          PG_URL: "postgresql://yap:crackme@127.0.0.1:5432/yap"
+    
     - name: Ensure yap_api container is present
       community.docker.docker_container:
         name: yap_api_01 
@@ -31,8 +44,9 @@
         exposed_ports:
           - "8080:8080"
         env: # see yap_back/yap/settings.py
-          PG_URL: "postgresql://user:crackme@localhost:5432/yap"
+          PG_URL: "postgresql://yap:crackme@127.0.0.1:5432/yap"
           APP_ENV: "prod"
+          APP_HOST: "0.0.0.0"
           APP_PORT: "8080"
           MINIO_ENDPOINT: "127.0.0.1:9091"
           # note, created manually
