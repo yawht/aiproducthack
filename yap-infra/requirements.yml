@@ -1,3 +1,4 @@
 - src: geerlingguy.postgresql
 - src: geerlingguy.docker
 - src: atosatto.minio
+- src: geerlingguy.redis
