@@ -12,7 +12,7 @@ from typing import Optional
 import numpy as np
 import PIL
 from PIL.Image import Image as PIL_Image
-
+import logging
 
 class ControlNet:
 
@@ -21,12 +21,13 @@ class ControlNet:
         controlnet_model_id: str = "diffusers/controlnet-canny-sdxl-1.0",
         vae_model_id: str = "madebyollin/sdxl-vae-fp16-fix",
         base_model_id: str = "stabilityai/stable-diffusion-xl-base-1.0",
+        device: str = "cuda"
     ) -> None:
 
-        if torch.cuda.is_available():
-            self.device = "cuda"
+        if device == "cuda" and torch.cuda.is_available():
             self.dtype = torch.float16
         else:
+            logging.warning("Using CPU for inference. This may be slow.")
             self.device = "cpu"
             self.dtype = torch.float32
 
@@ -59,8 +60,9 @@ class ControlNet:
     def generate(
         self,
         image: PIL_Image,
-        prompt: str,
+        positive_prompt: str,
         negative_prompt: Optional[str] = None,
+        seed: Optional[int] = 42,
         controlnet_conditioning_scale: Optional[float] = 0.65,
         num_inference_steps: Optional[int] = 50,
         guidance_scale: Optional[float] = 10.0,
@@ -80,12 +82,16 @@ class ControlNet:
         arr = arr[:, :, None]
         arr = np.concatenate([arr, arr, arr], axis=2)
         image = PIL.Image.fromarray(arr)
+        generator = torch.manual_seed(seed)
+
         return self.pipe(
-            prompt,
+            prompt=positive_prompt,
             image=image,
             negative_prompt=negative_prompt,
+            num_images_per_prompt=1,
             controlnet_conditioning_scale=controlnet_conditioning_scale,
             num_inference_steps=num_inference_steps,
             guidance_scale=guidance_scale,
+            generator=generator,
         ).to_tuple()[0][0]
 
