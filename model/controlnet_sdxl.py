@@ -32,16 +32,22 @@ class ControlNet:
             self.device = "cpu"
             self.dtype = torch.float32
 
+        logging.info("Initializing СontrolNet...")
+
         self.controlnet = ControlNetModel.from_pretrained(
             controlnet_model_id,
             use_safetensors=True,
             torch_dtype=self.dtype,
         ).to(self.device)
 
+        logging.info("Initializing VAE...")
+
         self.vae = AutoencoderKL.from_pretrained(
             vae_model_id,
             torch_dtype=self.dtype,
         ).to(self.device)
+        
+        logging.info("Initializing SDXL...")
 
         self.pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
             base_model_id,
