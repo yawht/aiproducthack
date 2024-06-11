@@ -32,7 +32,7 @@ def launch_generation(
     generation = schema.Generation(
         uid=uuid.uuid4(),
         status=schema.GenerationStatus.created,
-        input_img_path=request.input_image,
+        input_img_path=f'{YA_ART_SOURCE_BUCKET}/{request.input_image}',
         input_prompt=request.input_prompt,
     )
     db.add(generation)

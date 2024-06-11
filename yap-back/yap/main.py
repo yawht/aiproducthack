@@ -1,7 +1,6 @@
-import os
 from fastapi import FastAPI
 from yap.router.generation import generation_router
-from pydantic_settings import BaseSettings
+from yap.settings import settings
 
 import uvicorn
 
@@ -17,8 +16,8 @@ app.include_router(generation_router)
 
 
 def main():
-    uvicorn.run(app, port=8080, log_level="info")
+    uvicorn.run(app, port=int(settings.app_port), log_level="info")
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, port=8080, log_level="info")
+    main()
