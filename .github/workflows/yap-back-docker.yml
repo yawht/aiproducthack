@@ -1,6 +1,11 @@
 name: Dockerize yap-back
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch: {}
+  push:
+    branches: [ "main" ]
+    paths:
+        - 'yap-back/**'
 
 jobs:
 
@@ -32,4 +37,4 @@ jobs:
           platforms: linux/amd64
           push: true
           file: ./yap-back/build/Dockerfile
-          tags: cr.yandex/crp5ssrvkgu8uop1839g/yap/back:${{ github.run_id }}
+          tags: cr.yandex/crpqi7c93korf1gmhgn1/yap/back:${{ github.run_id }}
