@@ -46,7 +46,7 @@ class ControlNet:
             vae_model_id,
             torch_dtype=self.dtype,
         ).to(self.device)
-        
+
         logging.info("Initializing SDXL...")
 
         self.pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
@@ -58,7 +58,7 @@ class ControlNet:
             use_safetensors=True,
         ).to(self.device)
 
-        self.pipe.enable_model_cpu_offload()
+        # self.pipe.enable_model_cpu_offload()
         # speed up diffusion process with faster scheduler and memory optimization
         self.pipe.scheduler = UniPCMultistepScheduler.from_config(self.pipe.scheduler.config)
         # remove following line if xformers is not installed
