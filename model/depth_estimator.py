@@ -11,15 +11,17 @@ feature_extractor = None
 class DepthEstimator:
     def __init__(
         self,
+        device: str = "cuda",
         depth_estimator: str = "Intel/dpt-hybrid-midas",
         feature_extractor: str = "Intel/dpt-hybrid-midas",
     ):
         logging.basicConfig(level=logging.INFO)
         logging.info("Initializing depth estimator...")
-
+        
+        self.device = device
         self.depth_estimator = DPTForDepthEstimation.from_pretrained(
             depth_estimator
-        ).to("cuda")
+        ).to(self.device)
         self.feature_extractor = DPTFeatureExtractor.from_pretrained(
             feature_extractor
         )
@@ -28,9 +30,9 @@ class DepthEstimator:
     def get_depth_map(self, image):
         original_size = image.size
 
-        image = self.feature_extractor(images=image, return_tensors="pt").pixel_values.to("cuda")
+        image = self.feature_extractor(images=image, return_tensors="pt").pixel_values.to(self.device)
 
-        with torch.no_grad(), torch.autocast("cuda"):
+        with torch.no_grad(), torch.autocast(self.device):
             depth_map = self.depth_estimator(image).predicted_depth
 
         depth_map = torch.nn.functional.interpolate(
