@@ -42,13 +42,13 @@ class BackgroundReplacer:
         depth_map_blur_radius: int,
     ):
         pbar = tqdm(total=7)
-        logging.info("Original size:", image.size)
+        logging.info(f"Original size: {image.size}")
 
-        print(f"Ensuring resolution ({self.megapixels}MP)...")
+        logging.info(f"Ensuring resolution ({self.megapixels}MP)...")
         resized = ensure_resolution(image, self.upscaler, megapixels=self.megapixels)
         pbar.update(1)
 
-        logging.info("Resized size:", resized.size)
+        logging.info(f"Resized size: {resized.size}")
 
         torch.cuda.empty_cache()
 
@@ -122,8 +122,8 @@ class BackgroundReplacer:
         )
         final_negative_prompt = f"{negative_prompt}, {self.negative_prompt_suffix}"
 
-        logging.info("Final positive prompt:", final_positive_prompt)
-        logging.info("Final negative prompt:", final_negative_prompt)
+        logging.info(f"Final positive prompt: {final_positive_prompt}")
+        logging.info(f"Final negative prompt: {final_negative_prompt}")
 
         logging.info("Generating...")
 

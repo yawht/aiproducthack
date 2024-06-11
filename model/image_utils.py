@@ -22,7 +22,7 @@ def maybe_upscale(original, upscaler_inst: Upscaler, megapixels=1.0):
 
             upscaled = upscaler_inst.upscale(original)
 
-            logging.info("Upscaled size:", upscaled.size)
+            logging.info(f"Upscaled size: {upscaled.size}")
 
             return upscaled
 
@@ -49,7 +49,7 @@ def maybe_downscale(original, megapixels=1.0):
             downscaled = original.resize(
                 (target_width, target_height), Image.LANCZOS)
 
-            logging.info("Downscaled size:", downscaled.size)
+            logging.info(f"Downscaled size: {downscaled.size}")
 
             return downscaled
 
