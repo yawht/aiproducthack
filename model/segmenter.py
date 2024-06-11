@@ -32,6 +32,10 @@ class Segmenter:
         logging.basicConfig(level=logging.INFO)
         logging.info("Initializing segmenter...")
 
+        if device == "cuda" and not torch.cuda.is_available():
+            logging.warn("CUDA is not available, using CPU...")
+            device = "cpu"
+        
         if not os.path.exists("saved_models"):
             os.mkdir("saved_models")
             os.mkdir("git")
