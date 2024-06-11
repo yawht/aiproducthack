@@ -1,3 +1,5 @@
+import base64
+from pathlib import Path
 from fastapi.testclient import TestClient
 import pytest
 from alembic.command import upgrade
@@ -6,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from yarl import URL
 
 from yap.main import app
-from yap.orm import get_db
+from yap.dependencies import get_db
 from yap.alembic.utils import alembic_config_from_url, tmp_database
 
 
@@ -54,3 +56,11 @@ def api_client(orm_session):
     app.dependency_overrides[get_db] = get_db_wrapper
     client = TestClient(app=app, base_url="http://test")
     yield client
+
+@pytest.fixture
+def encoded_img():
+    samples_img = Path(__file__).parent / 'samples' / 'img.jpeg'
+    with open(samples_img, 'rb') as image_file:
+        raw = image_file.read()
+        yield base64.b64encode(raw).decode('utf-8')
+    

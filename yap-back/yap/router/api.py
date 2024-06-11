@@ -23,3 +23,7 @@ class Generation(BaseModel):
     input_prompt: Optional[str]
 
     results: list[GenerationResult]
+
+class CreateGenerationRequest(BaseModel):
+    input_image: str # NOTE base64 encoded image expected here
+    input_prompt: Optional[str] = None

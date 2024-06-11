@@ -4,24 +4,27 @@ import logging as log
 
 from minio import Minio
 
-ALLOWED_ENV = {'prod', 'test'}
+ALLOWED_ENV = {"prod", "test"}
+
 
 def get_app_env() -> str:
-    app_env = os.getenv('APP_ENV', 'test')
+    app_env = os.getenv("APP_ENV", "test")
     if app_env in ALLOWED_ENV:
         return app_env
-    raise ValueError('Unexpected APP_ENV %r', app_env)
+    raise ValueError("Unexpected APP_ENV %r", app_env)
 
 
 def _get_bucket_name(bucket_prefix: str) -> str:
-    return f'{bucket_prefix}-{get_app_env()}'
+    return f"{bucket_prefix}-{get_app_env()}"
 
 
-YA_ART_GEN_BUCKET = _get_bucket_name('ya-art-generated')
-INPAINTER_GEN_BUCKET = _get_bucket_name('inpainter-generated')
+YA_ART_SOURCE_BUCKET = _get_bucket_name("ya-art-source")
+YA_ART_GEN_BUCKET = _get_bucket_name("ya-art-generated")
+INPAINTER_GEN_BUCKET = _get_bucket_name("inpainter-generated")
 
 USED_BUCKETS = [
     YA_ART_GEN_BUCKET,
+    YA_ART_SOURCE_BUCKET,
     INPAINTER_GEN_BUCKET,
 ]
 
@@ -37,12 +40,14 @@ class PhotoRepository:
         for bucket_name in self._target_buckets:
             if not self._client.bucket_exists(bucket_name):
                 self._client.make_bucket(bucket_name)
-        log.info('Buckets inited')
+        log.info("Buckets inited")
 
     def upload_photo(self, bucket_name, photo_name, file_type, data: bytes):
         result = self._client.put_object(
-            bucket_name, photo_name, io.BytesIO(data),
+            bucket_name,
+            photo_name,
+            io.BytesIO(data),
             length=len(data),
-            content_type=f'image/{file_type}'
+            content_type=f"image/{file_type}",
         )
         return result

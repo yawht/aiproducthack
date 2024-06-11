@@ -22,6 +22,12 @@ clean:
 sdist: clean
 	env/bin/python setup.py sdist
 
+dist: sdist
+	env/bin/pip install -Ue '.'
+
+.PHONY: test-with-env
+test-with-env: dist test-env-up test test-env-down
+
 test:
 	env/bin/pytest
 
