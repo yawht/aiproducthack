@@ -35,6 +35,7 @@ def test_list(api_client, orm_session):
     data = response.json()
     assert len(data) == 1
 
+
 def test_get_one(api_client, orm_session):
     sample_gen = sample_generation()
     orm_session.add(sample_gen)
@@ -47,8 +48,11 @@ def test_get_one(api_client, orm_session):
     generation = yapi.Generation(**data)
     assert generation == mapper.map_generation_model(sample_gen)
 
+
 def test_create(api_client, orm_session, encoded_img: str):
-    res = api_client.post("/api/generations", json={'input_image': encoded_img})
+    res = api_client.post(
+        "/api/generations", json={"input_image": encoded_img, "input_prompt": None}
+    )
 
     assert res.status_code == 200
     data = res.json()
