@@ -1,0 +1,22 @@
+---
+- name: Configure nginx config for static front
+  hosts: all
+  become: yes
+  vars:
+    yap_api_uri: "http://127.0.0.1:8080"
+    minio_cdn_uri: "http://127.0.0.1:9091"
+  tasks:
+    - name: Copy systemd service file to server
+      ansible.builtin.template:
+        src: ../templates/nginx-config.j2
+        dest: "/etc/nginx/conf.d/default.conf"
+        owner: root
+        group: root
+        mode: "0744"
+
+    - name: Restart nginx service
+      systemd:
+        name: nginx
+        daemon_reload: true
+        state: "restarted"
+        enabled: yes

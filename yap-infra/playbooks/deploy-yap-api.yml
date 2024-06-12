@@ -52,3 +52,4 @@
           # note, created manually
           MINIO_ACCESS_KEY: dvB68mlI2enNB8hsHeu9
           MINIO_SECRET_KEY: AonnuBp3CKUsgvA9MhrOnuOzGqdUOVUEKojAaT9y
+          MINIO_CDN_PATH: http://158.160.151.53/cdn

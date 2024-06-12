@@ -4,7 +4,7 @@ from yap.settings import settings
 
 
 def form_image_link(img_path: str) -> str:
-    return f'http://{settings.minio_endpoint}/{img_path}'
+    return f'{settings.minio_cdn_path}/{img_path}'
 
 def map_generation_result_model(model: orm.GenerationResult) -> GenerationResult:
     return GenerationResult(
