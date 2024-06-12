@@ -2,7 +2,7 @@
 - hosts: all
   become: yes
   vars:
-    yap_api_tag: 9469276713
+    yap_api_tag: 9479304901
     yap_cr_path: cr.yandex/crpqi7c93korf1gmhgn1
     yap_api_image: "{{ yap_cr_path }}/yap/back"
     yap_cr_login: oauth
@@ -38,11 +38,6 @@
         state: started
         restart: true
         network_mode: host
-        default_host_ip: 0.0.0.0
-        ports:
-          - "8080:8080"
-        exposed_ports:
-          - "8080:8080"
         env: # see yap_back/yap/settings.py
           PG_URL: "postgresql://yap:crackme@127.0.0.1:5432/yap"
           APP_ENV: "prod"
@@ -52,4 +47,4 @@
           # note, created manually
           MINIO_ACCESS_KEY: dvB68mlI2enNB8hsHeu9
           MINIO_SECRET_KEY: AonnuBp3CKUsgvA9MhrOnuOzGqdUOVUEKojAaT9y
-          MINIO_CDN_PATH: http://158.160.151.53/cdn
+          MINIO_CDN_PATH: https://yawt.ru/cdn
