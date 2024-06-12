@@ -1,0 +1,36 @@
+server {
+    listen 80 default_server;
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/yawt.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/yawt.ru/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    if ($scheme != https) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    location / {
+        proxy_pass {{ yap_api_uri }};
+        proxy_redirect default;
+
+        add_header 'Access-Control-Allow-Origin' '$http_origin';
+        add_header 'Access-Control-Allow-Credentials' 'true';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, HEAD, OPTIONS';
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Session-Id';
+            add_header 'Access-Control-Max-Age' 57542400;
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Origin' '$http_origin';
+            add_header 'Content-Type' 'text/plain charset=UTF-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+    }
+
+    location /cdn {
+        rewrite /cdn(.*)$ $1 break;
+        proxy_pass {{ minio_cdn_uri }};
+        proxy_redirect default;
+    }
+}

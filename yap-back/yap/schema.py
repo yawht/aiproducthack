@@ -56,6 +56,7 @@ class Generation(Base):
     created_at: Mapped[datetime] = mapped_column(default=func.now(), type_=DateTime)
     meta: Mapped[dict] = mapped_column(nullable=False, server_default="{}", type_=JSONB)
 
+    # NOTE img_path has schema {bucket}/{object_name}, ex: ya-art-gen-test/1f1fe1b3-a54de49d-b177a18e-846496de
     input_img_path: Mapped[str]
     input_prompt: Mapped[Optional[str]]
 
@@ -75,6 +76,7 @@ class GenerationResult(Base):
     started_at: Mapped[datetime] = mapped_column(type_=DateTime)
     finished_at: Mapped[datetime] = mapped_column(default=func.now(), type_=DateTime)
 
+    # NOTE img_path has schema {bucket}/{object_name}, ex: ya-art-source-test/1f1fe1b3-a54de49d-b177a18e-846496de
     img_path: Mapped[Optional[str]]
     error: Mapped[Optional[str]]
 

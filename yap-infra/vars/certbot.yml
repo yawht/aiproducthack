@@ -1,0 +1,13 @@
+certbot_install_method: 'snap'
+certbot_auto_renew: true
+certbot_auto_renew_user: root
+certbot_auto_renew_hour: "3"
+certbot_auto_renew_minute: "30"
+certbot_auto_renew_options: "--quiet"
+certbot_create_if_missing: true
+certbot_create_standalone_stop_services:
+  - nginx
+certbot_admin_email: aa1limonov@yandex.ru
+certbot_certs:
+  - domains:
+      - yawt.ru

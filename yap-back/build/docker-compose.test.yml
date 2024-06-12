@@ -15,10 +15,32 @@ services:
       - "5432:5432"
   redis:
     image: redis:alpine
+    environment:
+      - REDIS_APPENDONLY=no
     ports:
       - "6379:6379"
+  minio:
+    image: quay.io/minio/minio
+    restart: always
+    privileged: true
+    command: minio server
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
     volumes:
-      - ./data:/data
+      - minio_storage:/data
+    ports:
+      - 9000:9000
+      - 9090:9090
+    environment:
+      - MINIO_VOLUMES="/data"
+      - MINIO_OPTS="--console-address :9001"
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=minio123
 networks:
   default:
     driver: bridge
+volumes:
+  minio_storage: {}
