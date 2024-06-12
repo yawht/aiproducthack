@@ -17,7 +17,7 @@ from depth_estimator import DepthEstimator
 from controlnet_sdxl import ControlNet
 from image_utils import ensure_resolution, crop_centered
 import logging
-from typing import Tuple
+from typing import Tuple, List
 
 
 class BackgroundReplacer:
@@ -42,7 +42,7 @@ class BackgroundReplacer:
         depth_map_feather_threshold: int,
         depth_map_dilation_iterations: int,
         depth_map_blur_radius: int,
-    ) -> Tuple[PIL.Image, PIL.Image]:
+    ) -> List[PIL.Image]:
         logging.info(f"Original size: {image.size}")
 
         logging.info(f"Ensuring resolution ({self.megapixels}MP)...")
