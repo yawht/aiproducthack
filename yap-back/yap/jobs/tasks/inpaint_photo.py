@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import datetime
 from dataclasses import dataclass
@@ -6,6 +7,7 @@ import requests
 
 from yap.jobs.app import celery_app
 from yap.jobs.task_utils import S3TaskMixin, DBTaskMixin
+from yap.ml_processors.inpaint_processor import InpaintProcessor, InpainterInput, InpainterOutput
 
 from yap import schema
 from yap.adapters.photo_repository import INPAINTER_GEN_BUCKET
@@ -14,7 +16,7 @@ from yap.adapters.photo_repository import INPAINTER_GEN_BUCKET
 class InpaintPhoto(S3TaskMixin, DBTaskMixin, celery_app.Task):
     name = 'inpaint_photo'
     def __init__(self):
-        self._inpainter = Inpainter()
+        self._inpainter = InpaintProcessor(device=os.getenv('MODEL_DEVICE', 'cpu'))
         self._init_s3()
         super(InpaintPhoto, self).__init__()
 
@@ -27,7 +29,9 @@ class InpaintPhoto(S3TaskMixin, DBTaskMixin, celery_app.Task):
             generation_obj = session.query(schema.Generation).get(generation_request_id)
             model_data = InpainterInput(
                 image_link=generation_obj.image_link,
-                prompt=generation_obj.input_prompt,
+                positive_prompt=generation_obj.input_prompt,
+                negative_prompt='',
+                description='',
             )
             session.commit()
         generated = self._inpainter.process(model_data)
