@@ -6,7 +6,7 @@
     yap_cr_path: cr.yandex/crpqi7c93korf1gmhgn1
     yap_api_image: "{{ yap_cr_path }}/yap/back"
     yap_cr_login: oauth
-    yap_cr_pass: "y0_AgAAAABawzbkAATuwQAAAAD_QmCHAAAo0Z8-7zVKhqySgdVyBqjC2ewKwA"
+    yap_cr_pass: "secret"
   tasks:
     - name: Login to cr.yandex
       community.docker.docker_login:
