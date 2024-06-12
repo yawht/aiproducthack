@@ -42,7 +42,7 @@ class BackgroundReplacer:
         depth_map_feather_threshold: int,
         depth_map_dilation_iterations: int,
         depth_map_blur_radius: int,
-    ) -> List[PIL.Image]:
+    ):
         logging.info(f"Original size: {image.size}")
 
         logging.info(f"Ensuring resolution ({self.megapixels}MP)...")
