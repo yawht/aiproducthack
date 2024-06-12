@@ -151,4 +151,4 @@ class BackgroundReplacer:
 
         logging.info("Done!")
 
-        return [composited_images]
+        return composited_images[0]

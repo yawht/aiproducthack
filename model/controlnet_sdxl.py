@@ -7,7 +7,7 @@ from diffusers import (
     UniPCMultistepScheduler,
 )
 import cv2
-from typing import Optional
+from typing import Optional, List
 
 import numpy as np
 import PIL
@@ -65,14 +65,14 @@ class ControlNet:
 
     def generate(
         self,
-        image: PIL.Image,
+        image: List[PIL.Image],
         positive_prompt: str,
         negative_prompt: Optional[str] = None,
         seed: Optional[int] = 42,
         controlnet_conditioning_scale: Optional[float] = 0.65,
         num_inference_steps: Optional[int] = 50,
         guidance_scale: Optional[float] = 10.0,
-    ) -> PIL.Image:
+    ) -> List[PIL.Image]:
 
         # arr = np.array(image)
         # arr = cv2.Canny(arr, 100, 200)
