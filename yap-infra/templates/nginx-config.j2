@@ -20,6 +20,7 @@ server {
     }
 
     location /cdn {
+        rewrite /cdn(.*)$ $1 break;
         proxy_pass {{ minio_cdn_uri }};
         proxy_redirect default;
     }
