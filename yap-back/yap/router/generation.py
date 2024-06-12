@@ -15,7 +15,7 @@ generation_router = APIRouter()
 
 @generation_router.get("/api/generations")
 def list_generations(db: Session = Depends(get_db)) -> list[Generation]:
-    sessionModels = db.query(schema.Generation).all()
+    sessionModels = db.query(schema.Generation).order_by(schema.Generation.created_at.desc()).all()
     return list(map(map_generation_model, sessionModels))
 
 
@@ -36,16 +36,26 @@ def launch_generation(
     photo_repo: PhotoRepository = Depends(get_photo_repo),
     db: Session = Depends(get_db),
 ) -> Generation:
-    img_decoded = base64.b64decode(request.input_image)
+    
+    # God i hate RFC2045
+    mime_header, encoded_img = request.input_image.split(",")
+    if encoded_img is None:
+        raise HTTPException(status_code=400, detail="Invalid image format")
+    _, raw_part = mime_header.split('/')
+    img_extension, _ = raw_part.split(';')
+    if img_extension not in ["jpeg", "png"]:
+        raise HTTPException(status_code=400, detail="Invalid image extension")
+
+    img_decoded = base64.b64decode(encoded_img)
     image_uuid = uuid.uuid4()
 
     res = photo_repo.upload_photo(
-        YA_ART_SOURCE_BUCKET, str(image_uuid), "jpeg", img_decoded
+        YA_ART_SOURCE_BUCKET, str(image_uuid), img_extension, img_decoded
     )
     generation = schema.Generation(
         uid=uuid.uuid4(),
         status=schema.GenerationStatus.created,
-        input_img_path=f"{YA_ART_SOURCE_BUCKET}/{str(image_uuid)}.jpeg",
+        input_img_path=f"{YA_ART_SOURCE_BUCKET}/{str(image_uuid)}.{img_extension}",
         input_prompt=request.input_prompt,
     )
     db.add(generation)

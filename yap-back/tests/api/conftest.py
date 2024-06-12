@@ -57,10 +57,10 @@ def api_client(orm_session):
     client = TestClient(app=app, base_url="http://test")
     yield client
 
-@pytest.fixture
-def encoded_img():
-    samples_img = Path(__file__).parent / 'samples' / 'img.jpeg'
-    with open(samples_img, 'rb') as image_file:
+
+@pytest.fixture(params=["jpeg", "png"])
+def encoded_img(request):
+    samples_img = Path(__file__).parent / "samples" / "img.jpeg"
+    with open(samples_img, "rb") as image_file:
         raw = image_file.read()
-        yield base64.b64encode(raw).decode('utf-8')
-    
+        yield f"data:image/{request.param};base64," + base64.b64encode(raw).decode("utf-8")
