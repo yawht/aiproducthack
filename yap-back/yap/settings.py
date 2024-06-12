@@ -10,5 +10,6 @@ class AppSettings (BaseSettings):
     minio_endpoint: str = os.getenv('MINIO_ENDPOINT', '127.0.0.1:9000')
     minio_access_key: str = os.getenv('MINIO_ACCESS_KEY', 'minio')
     minio_secret_key: str = os.getenv('MINIO_SECRET_KEY', 'minio123')
+    minio_cdn_path: str = os.getenv('MINIO_CDN_PATH', 'http://127.0.0.1:9091')
 
 settings = AppSettings()

@@ -10,6 +10,7 @@ engine = create_engine(settings.pg_url, connect_args={})
 session_factory = sessionmaker(autocommit=False, bind=engine)
 
 minio_client = create_minio_client(settings.minio_endpoint, settings.minio_access_key, settings.minio_secret_key)
+photo_repo = PhotoRepository(minio_client)
 
 def get_db():
     db = session_factory()
@@ -19,5 +20,4 @@ def get_db():
         db.close()
 
 def get_photo_repo():
-    photo_repo = PhotoRepository(minio_client)
     yield photo_repo

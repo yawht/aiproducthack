@@ -1,8 +1,9 @@
 from datetime import datetime
 from http import HTTPStatus
 import uuid
+import yap.router.api as yapi
+import yap.mapper.generation as mapper
 from yap.schema import Generation, GenerationResult, GenerationStatus
-from yap.router.api import CreateGenerationRequest
 
 
 def sample_generation() -> Generation:
@@ -24,7 +25,7 @@ def sample_generation() -> Generation:
     return gen
 
 
-def test_get(api_client, orm_session):
+def test_list(api_client, orm_session):
     orm_session.add(sample_generation())
     orm_session.commit()
 
@@ -33,6 +34,18 @@ def test_get(api_client, orm_session):
 
     data = response.json()
     assert len(data) == 1
+
+def test_get_one(api_client, orm_session):
+    sample_gen = sample_generation()
+    orm_session.add(sample_gen)
+    orm_session.commit()
+
+    response = api_client.get(f"/api/generations/{str(sample_gen.uid)}")
+    assert response.status_code == HTTPStatus.OK
+
+    data = response.json()
+    generation = yapi.Generation(**data)
+    assert generation == mapper.map_generation_model(sample_gen)
 
 def test_create(api_client, orm_session, encoded_img: str):
     res = api_client.post("/api/generations", json={'input_image': encoded_img})

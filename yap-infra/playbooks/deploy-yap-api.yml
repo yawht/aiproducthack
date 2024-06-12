@@ -6,7 +6,7 @@
     yap_cr_path: cr.yandex/crpqi7c93korf1gmhgn1
     yap_api_image: "{{ yap_cr_path }}/yap/back"
     yap_cr_login: oauth
-    yap_cr_pass: "secret"
+    yap_cr_pass: "y0_AgAAAABawzbkAATuwQAAAAD_QmCHAAAo0Z8-7zVKhqySgdVyBqjC2ewKwA"
   tasks:
     - name: Login to cr.yandex
       community.docker.docker_login:
@@ -52,3 +52,4 @@
           # note, created manually
           MINIO_ACCESS_KEY: dvB68mlI2enNB8hsHeu9
           MINIO_SECRET_KEY: AonnuBp3CKUsgvA9MhrOnuOzGqdUOVUEKojAaT9y
+          MINIO_CDN_PATH: http://158.160.151.53/cdn
