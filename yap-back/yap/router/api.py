@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import UUID4, BaseModel
+from pydantic import UUID4, BaseModel, Field
 
 
 class GenerationResult(BaseModel):
@@ -25,5 +25,5 @@ class Generation(BaseModel):
     results: list[GenerationResult]
 
 class CreateGenerationRequest(BaseModel):
-    input_image: str # NOTE base64 encoded image expected here
-    input_prompt: Optional[str] = None
+    input_image: str = Field(examples=["jpeg;long-base-64..."])
+    input_prompt: Optional[str]
