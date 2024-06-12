@@ -48,8 +48,6 @@ class Segmenter:
             os.system(
                 "mv git/xuebinqin/DIS/IS-Net/* .")
 
-        import models
-        import data_loader_cache
 
         self.ISNetDIS = models.ISNetDIS
         self.normalize = data_loader_cache.normalize
@@ -149,7 +147,8 @@ class Segmenter:
         # it is the mask we need
         return (pred_val.detach().cpu().numpy()*255).astype(np.uint8)
 
-    def segment(self, image: Image) -> (Image, Image):
+
+    def segment(self, image: Image):
         image_tensor, orig_size = self.load_image(image)
         mask = self.predict(image_tensor, orig_size)
 

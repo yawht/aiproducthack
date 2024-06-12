@@ -11,30 +11,6 @@ from yap import schema
 from yap.adapters.photo_repository import INPAINTER_GEN_BUCKET
 
 
-@dataclass
-class InpainterInput:
-    image_link: str
-    prompt: Optional[str]
-
-
-@dataclass
-class InpainterOutput:
-    image: bytes
-    filetype: str
-
-
-class Inpainter:
-    """
-    Этот код поедет к мльщикам, в другой пакет
-    """
-
-    def process(self, inp: InpainterInput) -> InpainterOutput:
-        import time
-        time.sleep(3)
-        resp = requests.get(inp.image_link)
-        return InpainterOutput(resp.content, 'jpeg')
-
-
 class InpaintPhoto(S3TaskMixin, DBTaskMixin, celery_app.Task):
     name = 'inpaint_photo'
     def __init__(self):
