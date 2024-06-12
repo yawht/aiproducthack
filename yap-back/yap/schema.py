@@ -58,7 +58,9 @@ class Generation(Base):
 
     # NOTE img_path has schema {bucket}/{object_name}, ex: ya-art-gen-test/1f1fe1b3-a54de49d-b177a18e-846496de
     input_img_path: Mapped[str]
+    description: Mapped[Optional[str]]
     input_prompt: Mapped[Optional[str]]
+    negative_prompt: Mapped[Optional[str]]
 
     results: Mapped[List["GenerationResult"]] = relationship(
         back_populates="generation", cascade="all, delete-orphan"

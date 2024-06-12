@@ -13,6 +13,7 @@ def sample_generation() -> Generation:
     gen.created_at = datetime.now()
     gen.meta = {}
     gen.input_img_path = "img-in"
+    gen.description = "description"
 
     gen_result = GenerationResult()
     gen_result.uid = uuid.uuid4()
@@ -51,7 +52,13 @@ def test_get_one(api_client, orm_session):
 
 def test_create(api_client, orm_session, encoded_img: str):
     res = api_client.post(
-        "/api/generations", json={"input_image": encoded_img, "input_prompt": None}
+        "/api/generations",
+        json={
+            "input_image": encoded_img,
+            "description": "Стул",
+            "input_prompt": None,
+            "negative_prompt": None,
+        },
     )
 
     assert res.status_code == 200
