@@ -20,10 +20,14 @@ class Generation(BaseModel):
     metadata: dict
 
     input_image_link: str
+    description: str
+    negative_prompt: Optional[str]
     input_prompt: Optional[str]
 
     results: list[GenerationResult]
 
 class CreateGenerationRequest(BaseModel):
     input_image: str = Field(examples=["jpeg;long-base-64..."])
+    description: str
+    negative_prompt: Optional[str]
     input_prompt: Optional[str]

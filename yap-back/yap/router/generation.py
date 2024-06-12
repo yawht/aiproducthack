@@ -15,9 +15,7 @@ generation_router = APIRouter()
 
 
 @generation_router.get("/api/generations")
-def list_generations(
-    page: int = 0, size: int = 50, db: Session = Depends(get_db)
-) -> list[Generation]:
+def list_generations(db: Session = Depends(get_db)) -> list[Generation]:
     sessionModels = (
         db.query(schema.Generation)
         .order_by(schema.Generation.created_at.desc())
@@ -44,7 +42,6 @@ def launch_generation(
     photo_repo: PhotoRepository = Depends(get_photo_repo),
     db: Session = Depends(get_db),
 ) -> Generation:
-
     # God i hate RFC2045
     mime_header, encoded_img = request.input_image.split(",")
     if encoded_img is None:
@@ -65,6 +62,8 @@ def launch_generation(
         status=schema.GenerationStatus.created,
         input_img_path=f"{YA_ART_SOURCE_BUCKET}/{str(image_uuid)}.{img_extension}",
         input_prompt=request.input_prompt,
+        negative_prompt=request.negative_prompt,
+        description=request.description,
     )
     db.add(generation)
     db.flush()
