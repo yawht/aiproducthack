@@ -1,7 +1,7 @@
 import math
 from PIL import Image
 import logging
-from upscaler import Upscaler
+from yap.ml_processors.upscaler import Upscaler
 
 UPSCALE_PIXEL_THRESHOLD = 1
 DOWNSCALE_PIXEL_THRESHOLD = 1

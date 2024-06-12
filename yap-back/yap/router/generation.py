@@ -9,6 +9,7 @@ from yap.adapters.photo_repository import PhotoRepository, YA_ART_SOURCE_BUCKET
 from yap.router.api import CreateGenerationRequest, Generation
 from yap.mapper.generation import map_generation_model
 from yap.settings import settings
+from yap.jobs.tasks import inpaint_photo
 
 
 generation_router = APIRouter()
@@ -67,9 +68,8 @@ def launch_generation(
     )
     db.add(generation)
     db.flush()
-    res = map_generation_model(
-        db.query(schema.Generation).where(schema.Generation.uid == generation.uid).one()
-    )
+    res = map_generation_model(generation)
     db.commit()
+    task_result = inpaint_photo.delay(res.uid)
 
-    return res
+    return task_result

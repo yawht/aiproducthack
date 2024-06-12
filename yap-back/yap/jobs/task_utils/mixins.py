@@ -4,7 +4,7 @@ import io
 from minio import Minio
 from sqlalchemy.orm import Session
 
-from yap.orm import session_factory
+from yap.dependencies import session_factory
 from yap.adapters import PhotoRepository, init_minio_client
 
 

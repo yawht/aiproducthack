@@ -8,7 +8,6 @@ import torch
 from torch.autograd import Variable
 from torchvision import transforms
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
 import logging
 import torch.nn as nn
 from typing import List, Tuple, Dict, Optional, Any
