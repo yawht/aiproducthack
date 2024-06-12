@@ -9,6 +9,7 @@ import torch
 from PIL import Image, ImageFilter
 from scipy.ndimage import binary_dilation
 import numpy as np
+import PIL
 
 from upscaler import Upscaler
 from segmenter import Segmenter
@@ -16,6 +17,7 @@ from depth_estimator import DepthEstimator
 from controlnet_sdxl import ControlNet
 from image_utils import ensure_resolution, crop_centered
 import logging
+from typing import Tuple
 
 
 class BackgroundReplacer:
@@ -36,11 +38,11 @@ class BackgroundReplacer:
 
     def preprocess(
         self,
-        image,
+        image: PIL.Image,
         depth_map_feather_threshold: int,
         depth_map_dilation_iterations: int,
         depth_map_blur_radius: int,
-    ):
+    ) -> Tuple[PIL.Image, PIL.Image]:
         logging.info(f"Original size: {image.size}")
 
         logging.info(f"Ensuring resolution ({self.megapixels}MP)...")
@@ -95,16 +97,16 @@ class BackgroundReplacer:
 
     def replace_background(
         self,
-        image,
-        description,
-        positive_prompt,
-        negative_prompt,
+        image: PIL.Image,
+        description: str,
+        positive_prompt: str,
+        negative_prompt: str,
         seed: int = 0,
         num_inference_steps: int = 30,
         depth_map_feather_threshold: int = 128,
         depth_map_dilation_iterations: int = 10,
         depth_map_blur_radius: int = 10,
-    ):
+    ) -> PIL.Image:
         pbar = tqdm(total=3)
         
         cropped, ready_image = self.preprocess(

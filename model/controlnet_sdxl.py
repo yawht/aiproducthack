@@ -11,7 +11,6 @@ from typing import Optional
 
 import numpy as np
 import PIL
-from PIL.Image import Image as PIL_Image
 import logging
 
 class ControlNet:
@@ -66,14 +65,14 @@ class ControlNet:
 
     def generate(
         self,
-        image: PIL_Image,
+        image: PIL.Image,
         positive_prompt: str,
         negative_prompt: Optional[str] = None,
         seed: Optional[int] = 42,
         controlnet_conditioning_scale: Optional[float] = 0.65,
         num_inference_steps: Optional[int] = 50,
         guidance_scale: Optional[float] = 10.0,
-    ) -> PIL_Image:
+    ) -> PIL.Image:
 
         # arr = np.array(image)
         # arr = cv2.Canny(arr, 100, 200)
