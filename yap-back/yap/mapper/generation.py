@@ -26,6 +26,8 @@ def map_generation_model(model: orm.Generation) -> Generation:
         finished_at=last_finished_res.finished_at if last_finished_res else None,
         metadata=model.meta,
         input_image_link=form_image_link(model.input_img_path),
+        description=model.description or '',
+        negative_prompt=model.negative_prompt,
         input_prompt=model.input_prompt,
         results=list(map(map_generation_result_model, result_models)),
     )
