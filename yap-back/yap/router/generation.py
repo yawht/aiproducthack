@@ -55,7 +55,7 @@ def launch_generation(
     image_uuid = uuid.uuid4()
 
     res = photo_repo.upload_photo(
-        YA_ART_SOURCE_BUCKET, f"str(image_uuid).{img_extension}", img_extension, img_decoded
+        YA_ART_SOURCE_BUCKET, f"{str(image_uuid)}.{img_extension}", img_extension, img_decoded
     )
     generation = schema.Generation(
         uid=uuid.uuid4(),
