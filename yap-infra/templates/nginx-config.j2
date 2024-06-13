@@ -1,6 +1,9 @@
 server {
     listen 80 default_server;
     listen 443 ssl; # managed by Certbot
+
+    root /var/www/yap;
+
     ssl_certificate /etc/letsencrypt/live/yawt.ru/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/yawt.ru/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
@@ -11,6 +14,11 @@ server {
     } # managed by Certbot
 
     location / {
+        try_files $uri $uri/ =404;
+        error_page 404 /index.html;
+    }
+
+    location /api {
         proxy_pass {{ yap_api_uri }};
         proxy_redirect default;
 

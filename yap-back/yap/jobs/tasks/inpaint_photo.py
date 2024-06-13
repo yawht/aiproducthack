@@ -56,11 +56,7 @@ class Inpainter:
                 f"image/{inp.extension}",
             ),
             "prompt": (None, inp.prompt or ""),
-            "negative_prompt": (
-                None,
-                settings.bento_negative_prompt
-                or "ugly, disfigured, ill-structured, low resolution",
-            ),
+            "negative_prompt": (None, settings.bento_negative_prompt),
             "controlnet_conditioning_scale": (None, "0.5"),
             "num_inference_steps": (None, "25"),
         }
