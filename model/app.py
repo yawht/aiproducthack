@@ -2,81 +2,51 @@ import os
 
 import gradio as gr
 
-from background_replacer import replace_background
+from background_replacer import BackgroundReplacer
 
-developer_mode = os.getenv('DEV_MODE', False)
+developer_mode = os.getenv("DEV_MODE", True)
 
-DEFAULT_POSITIVE_PROMPT = "on the pavement, poolside, idyllic infinity pool, Hawaiian hilltops, commercial product photography"
-DEFAULT_NEGATIVE_PROMPT = ""
-
-EXAMPLES = [
-    [
-        "examples/black-sneakers-with-white-sole.jpg",
-        "on the grass in Central Park, gorgeous summer day with Bethesda fountain in the background, commercial footwear product photography",
-        "people, litter, trash, crowds, messy",
-    ],
-    [
-        "examples/DIY-beard-balm.jpg",
-        "on a mossy rock, white wood anemone blossoms, Loch Ken, Scotland",
-        "purple, wrong proportions",
-    ],
-    [
-        "examples/dj-making-music-on-mixer.jpg",
-        "on the turntables with a packed dance floor, epic midnight edm party in Miami Beach, colorful nightlife photography",
-        "disfigured, dismembered, mangled, marred",
-    ],
-    [
-        "examples/jean-shorts-woman.jpg",
-        "on the beach in Malibu, a five-star beachfront hotel in the background, stark late afternoon light near the dunes, lifestyle photography",
-        "blurry background, ripples, soft focus, bokeh",
-    ],
-]
-
-INTRO = """
-# SDXL Background Replacement for Product Images
-_from your friends at_ 🛍️[Shopify](https://www.shopify.com/)
-
-[![Duplicate this Space](https://huggingface.co/datasets/huggingface/badges/resolve/main/duplicate-this-space-md.svg)](https://huggingface.co/spaces/Shopify/background-replacement?duplicate=true)
-
-Building an online store requires lots of high quality product and marketing images. This is an early demo of a background replacement tool built with Stable Diffusion XL that makes it easy to use your existing product images to make something new. Please be patient during peak demand. 😅
-
-To use it, upload your product photo (.jpg or .png), then describe the background you’d like to see in place of the original. For best results follow the general pattern in the examples below:
-1. ❌ _Do not_ describe your product in the prompt (ex: black sneakers)
-2. ✅ Do describe the "grounding" for your product (ex: placed on a table)
-3. ✅ Do describe the scene you want (ex: in a greek cottage)
-4. ✅ Do describe a style of image (ex: side view commercial product photography)
-5. 🤔 Optionally, describe what you want to avoid 🙅 in the negative prompt field
+DEFAULT_POSITIVE_PROMPT = """located in a cozy outdoor kitchen area, near a wooden deck, evening time, 
+warm lighting from lanterns and string lights, surrounded by lush greenery 
+and a few potted plants, BBQ atmosphere
 """
-
-MORE_INFO = """
-### More information
-- You can check our [FAQs here](https://huggingface.co/spaces/Shopify/background-replacement/blob/main/README.md#faqs)!
-- We are also gathering resources from the community and sharing ideas [here](https://huggingface.co/spaces/Shopify/background-replacement/discussions).
-- Shopify is on a mission to redefine commerce with AI. If you’re an AI or ML engineer looking to build the future of commerce, [join us](https://www.shopify.com/careers)!
+DEFAULT_NEGATIVE_PROMPT = """curved lines, ornate, baroque, abstract, grunge, logo, text,word,cropped,
+low quality,normal quality,username,watermark,signature,blurry,soft,soft 
+line,sketch,ugly,logo,pixelated,lowres"
 """
+INTRO = "AI Product Hackaton | YAHT"
+
+MORE_INFO = "Weee ^^"
+
+replacer = BackgroundReplacer(device="cuda")
 
 
 def generate(
     image,
+    description,
     positive_prompt,
     negative_prompt,
     seed,
+    num_inference_steps,
     depth_map_feather_threshold,
     depth_map_dilation_iterations,
     depth_map_blur_radius,
-    progress=gr.Progress(track_tqdm=True)
+    progress=gr.Progress(track_tqdm=True),
 ):
     if image is None:
-        return [None, None, None, None]
+        return [None]
 
-    options = {
-        'seed': seed,
-        'depth_map_feather_threshold': depth_map_feather_threshold,
-        'depth_map_dilation_iterations': depth_map_dilation_iterations,
-        'depth_map_blur_radius': depth_map_blur_radius,
-    }
-
-    return replace_background(image, positive_prompt, negative_prompt, options)
+    return replacer.replace_background(
+        image,
+        description,
+        positive_prompt,
+        negative_prompt,
+        seed=seed,
+        num_inference_steps=num_inference_steps,
+        depth_map_feather_threshold=depth_map_feather_threshold,
+        depth_map_dilation_iterations=depth_map_dilation_iterations,
+        depth_map_blur_radius=depth_map_blur_radius
+    )
 
 
 custom_css = """
@@ -115,96 +85,69 @@ with gr.Blocks(css=custom_css) as iface:
     with gr.Row():
         with gr.Column():
             image_upload = gr.Image(
-                label="Product image",
-                type="pil",
-                elem_id="image-upload"
-            )
-            caption = gr.Label(
-                label="Caption",
-                visible=developer_mode
+                label="Фотография товара", type="pil", elem_id="image-upload"
             )
         with gr.Column(elem_id="params"):
-            with gr.Tab('Prompts'):
+            with gr.Tab("Промпты"):
+                description = gr.Textbox(label="Описание товара", lines=3, value="")
                 positive_prompt = gr.Textbox(
-                    label="Positive Prompt: describe what you'd like to see",
+                    label=(
+                        "Позитивный промпт: то, что хочется ",
+                        "видеть на фоне. Лучше писать на английском :)"
+                    ),
                     lines=3,
-                    value=DEFAULT_POSITIVE_PROMPT
+                    value=DEFAULT_POSITIVE_PROMPT,
                 )
                 negative_prompt = gr.Textbox(
-                    label="Negative Prompt: describe what you want to avoid",
+                    label="Негативный промпт: то, что не хочется видеть на фоне.",
                     lines=3,
-                    value=DEFAULT_NEGATIVE_PROMPT
+                    value=DEFAULT_NEGATIVE_PROMPT,
                 )
-            if developer_mode:
-                with gr.Tab('Options'):
-                    seed = gr.Number(
-                        label="Seed",
-                        precision=0,
-                        value=0,
-                        elem_id="seed",
-                        visible=developer_mode
-                    )
-                    depth_map_feather_threshold = gr.Slider(
-                        label="Depth map feather threshold",
-                        value=128,
-                        minimum=0,
-                        maximum=255,
-                        visible=developer_mode
-                    )
-                    depth_map_dilation_iterations = gr.Number(
-                        label="Depth map dilation iterations",
-                        precision=0,
-                        value=10,
-                        minimum=0,
-                        visible=developer_mode
-                    )
-                    depth_map_blur_radius = gr.Number(
-                        label="Depth map blur radius",
-                        precision=0,
-                        value=10,
-                        minimum=0,
-                        visible=developer_mode
-                    )
-            else:
-                seed = gr.Number(value=-1, visible=False)
+            with gr.Tab("Опции для генерации"):
+                seed = gr.Number(
+                    label=(
+                        "Seed: можешь его менять, чтобы изменить генерацию ",
+                        "для одинх и тех же данных. В ином случае генерация ",
+                        "на одном и том же seed будет одинаковая."
+                    ),
+                    precision=0,
+                    value=0,
+                    elem_id="seed",
+                    visible=True,
+                )
                 depth_map_feather_threshold = gr.Slider(
-                    value=128, visible=False)
+                    label="Depth map feather threshold",
+                    value=128,
+                    minimum=0,
+                    maximum=255,
+                    visible=True,
+                )
                 depth_map_dilation_iterations = gr.Number(
-                    precision=0, value=10, visible=False)
+                    label="Depth map dilation iterations",
+                    precision=0,
+                    value=10,
+                    minimum=0,
+                    visible=True,
+                )
                 depth_map_blur_radius = gr.Number(
-                    precision=0, value=10, visible=False)
+                    label="Depth map blur radius",
+                    precision=0,
+                    value=10,
+                    minimum=0,
+                    visible=True,
+                )
+                num_inference_steps = gr.Number(
+                    label="Number inference step: чем больше - тем лучше, но и дольше :)",
+                    precision=0,
+                    value=30,
+                    minimum=5,
+                    visible=True,
+                )
 
     gen_button = gr.Button(value="Generate!", variant="primary")
 
-    with gr.Tab('Results'):
-        results = gr.Gallery(
-            show_label=False,
-            object_fit="contain",
-            columns=4
-        )
-
-    if developer_mode:
-        with gr.Tab('Generated'):
-            generated = gr.Gallery(
-                show_label=False,
-                object_fit="contain",
-                columns=4
-            )
-
-        with gr.Tab('Pre-processing'):
-            pre_processing = gr.Gallery(
-                show_label=False,
-                object_fit="contain",
-                columns=4
-            )
-    else:
-        generated = gr.Gallery(visible=False)
-        pre_processing = gr.Gallery(visible=False)
-
-    gr.Examples(
-        examples=EXAMPLES,
-        inputs=[image_upload, positive_prompt, negative_prompt],
-    )
+    with gr.Tab("Results"):
+        results = gr.Gallery(show_label=False, object_fit="contain", columns=4)
 
     gr.Markdown(MORE_INFO)
 
@@ -212,19 +155,16 @@ with gr.Blocks(css=custom_css) as iface:
         fn=generate,
         inputs=[
             image_upload,
+            description,
             positive_prompt,
             negative_prompt,
             seed,
+            num_inference_steps,
             depth_map_feather_threshold,
             depth_map_dilation_iterations,
-            depth_map_blur_radius
+            depth_map_blur_radius,
         ],
-        outputs=[
-            results,
-            generated,
-            pre_processing,
-            caption
-        ],
+        outputs=[results],
     )
 
-iface.queue(api_open=False).launch(show_api=False)
+iface.queue(api_open=False).launch(show_api=False, share=True)
