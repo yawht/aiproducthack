@@ -10,6 +10,7 @@ class AppSettings(BaseSettings):
     generation_list_limit: int = os.getenv("GENERATION_GET_LIMIT", 50)
     yc_oauth_token: str = os.getenv("YC_OAUTH_TOKEN", "")
     bento_negative_prompt: str = os.getenv("BENTO_NEGATIVE_PROMPT", "ugly, disfigured, ill-structured, low resolution")
+    bento_url: str = os.getenv("BENTO_URL", "https://node-api.datasphere.yandexcloud.net/generate")
     minio_endpoint: str = os.getenv("MINIO_ENDPOINT", "127.0.0.1:9000")
     minio_access_key: str = os.getenv("MINIO_ACCESS_KEY", "minio")
     minio_secret_key: str = os.getenv("MINIO_SECRET_KEY", "minio123")
