@@ -75,5 +75,4 @@ vine==5.1.0
 watchfiles==0.22.0
 wcwidth==0.2.13
 websockets==12.0
--e git+https://github.com/yawht/aiproducthack.git@97ac24c152a01350092a982f68f136a99b9ce4cb#egg=yap&subdirectory=yap-back
 yarl==1.9.4
