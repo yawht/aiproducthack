@@ -1,3 +1,4 @@
+import io
 import uuid
 from datetime import datetime
 from dataclasses import dataclass
@@ -29,20 +30,20 @@ def get_iam_token() -> str:
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
     }
-    data = f'{"yandexPassportOauthToken":{settings.yc_oauth_token}}'.encode()
     response = requests.post(
-        "https://iam.api.cloud.yandex.net/iam/v1/tokens", headers=headers, data=data
+        "https://iam.api.cloud.yandex.net/iam/v1/tokens",
+        headers=headers,
+        json={"yandexPassportOauthToken": settings.yc_oauth_token},
     )
-    return response.text
+    return response.json()["iamToken"]
 
 
 class Inpainter:
 
     # God why...
     def process(self, inp: InpainterInput) -> InpainterOutput:
-        iam_token = requests.post(
-            url="https://iam.api.cloud.yandex.net/iam/v1/tokens",
-        )
+        iam_token = get_iam_token()
+        filedata = io.BytesIO(inp.image_bytes)
         headers = {
             "x-node-alias": "datasphere.user.bento",
             "Authorization": f"Bearer {iam_token}",
@@ -51,16 +52,15 @@ class Inpainter:
         }
         files = {
             "image": (
-                None,
-                inp.image_bytes,
-                f"image/{inp.extension}",
+                f"image.{inp.extension}",
+                filedata
             ),
             "prompt": (None, inp.prompt or ""),
             "negative_prompt": (None, settings.bento_negative_prompt),
             "controlnet_conditioning_scale": (None, "0.5"),
             "num_inference_steps": (None, "25"),
         }
-        response = requests.post(url=settings.bento_url, headers=headers, files=files)
+        response = requests.post(url=settings.bento_url, headers=headers, files=files, timeout=(15, 50))
         return InpainterOutput(response.content, "jpeg")
 
 

@@ -54,4 +54,4 @@ class PhotoRepository:
 
     def get_photo(self, bucket_name, photo_name) -> bytes:
         result = self._client.get_object(bucket_name, photo_name)
-        result.data
+        return result.data
