@@ -4,19 +4,17 @@ import gradio as gr
 
 from background_replacer import BackgroundReplacer
 
-developer_mode = os.getenv("DEV_MODE", False)
+developer_mode = os.getenv("DEV_MODE", True)
 
-DEFAULT_POSITIVE_PROMPT = """
-located in a cozy outdoor kitchen area, near a wooden deck, evening time, 
+DEFAULT_POSITIVE_PROMPT = """located in a cozy outdoor kitchen area, near a wooden deck, evening time, 
 warm lighting from lanterns and string lights, surrounded by lush greenery 
 and a few potted plants, BBQ atmosphere
 """
-DEFAULT_NEGATIVE_PROMPT = """
-curved lines, ornate, baroque, abstract, grunge, logo, text,word,cropped,
+DEFAULT_NEGATIVE_PROMPT = """curved lines, ornate, baroque, abstract, grunge, logo, text,word,cropped,
 low quality,normal quality,username,watermark,signature,blurry,soft,soft 
 line,sketch,ugly,logo,pixelated,lowres"
 """
-INTRO = "AI Product Hackaton"
+INTRO = "AI Product Hackaton | YAHT"
 
 MORE_INFO = "Weee ^^"
 
@@ -29,6 +27,7 @@ def generate(
     positive_prompt,
     negative_prompt,
     seed,
+    num_inference_steps,
     depth_map_feather_threshold,
     depth_map_dilation_iterations,
     depth_map_blur_radius,
@@ -43,6 +42,7 @@ def generate(
         positive_prompt,
         negative_prompt,
         seed=seed,
+        num_inference_steps=num_inference_steps,
         depth_map_feather_threshold=depth_map_feather_threshold,
         depth_map_dilation_iterations=depth_map_dilation_iterations,
         depth_map_blur_radius=depth_map_blur_radius
@@ -85,58 +85,64 @@ with gr.Blocks(css=custom_css) as iface:
     with gr.Row():
         with gr.Column():
             image_upload = gr.Image(
-                label="Product image", type="pil", elem_id="image-upload"
+                label="Фотография товара", type="pil", elem_id="image-upload"
             )
         with gr.Column(elem_id="params"):
-            with gr.Tab("Prompts"):
-                description = gr.Textbox(label="Description", lines=3, value="")
+            with gr.Tab("Промпты"):
+                description = gr.Textbox(label="Описание товара", lines=3, value="")
                 positive_prompt = gr.Textbox(
-                    label="Positive Prompt: describe what you'd like to see",
+                    label=(
+                        "Позитивный промпт: то, что хочется ",
+                        "видеть на фоне. Лучше писать на английском :)"
+                    ),
                     lines=3,
                     value=DEFAULT_POSITIVE_PROMPT,
                 )
                 negative_prompt = gr.Textbox(
-                    label="Negative Prompt: describe what you want to avoid",
+                    label="Негативный промпт: то, что не хочется видеть на фоне.",
                     lines=3,
                     value=DEFAULT_NEGATIVE_PROMPT,
                 )
-            if developer_mode:
-                with gr.Tab("Options"):
-                    seed = gr.Number(
-                        label="Seed",
-                        precision=0,
-                        value=0,
-                        elem_id="seed",
-                        visible=developer_mode,
-                    )
-                    depth_map_feather_threshold = gr.Slider(
-                        label="Depth map feather threshold",
-                        value=128,
-                        minimum=0,
-                        maximum=255,
-                        visible=developer_mode,
-                    )
-                    depth_map_dilation_iterations = gr.Number(
-                        label="Depth map dilation iterations",
-                        precision=0,
-                        value=10,
-                        minimum=0,
-                        visible=developer_mode,
-                    )
-                    depth_map_blur_radius = gr.Number(
-                        label="Depth map blur radius",
-                        precision=0,
-                        value=10,
-                        minimum=0,
-                        visible=developer_mode,
-                    )
-            else:
-                seed = gr.Number(value=-1, visible=False)
-                depth_map_feather_threshold = gr.Slider(value=128, visible=False)
-                depth_map_dilation_iterations = gr.Number(
-                    precision=0, value=10, visible=False
+            with gr.Tab("Опции для генерации"):
+                seed = gr.Number(
+                    label=(
+                        "Seed: можешь его менять, чтобы изменить генерацию ",
+                        "для одинх и тех же данных. В ином случае генерация ",
+                        "на одном и том же seed будет одинаковая."
+                    ),
+                    precision=0,
+                    value=0,
+                    elem_id="seed",
+                    visible=True,
                 )
-                depth_map_blur_radius = gr.Number(precision=0, value=10, visible=False)
+                depth_map_feather_threshold = gr.Slider(
+                    label="Depth map feather threshold",
+                    value=128,
+                    minimum=0,
+                    maximum=255,
+                    visible=True,
+                )
+                depth_map_dilation_iterations = gr.Number(
+                    label="Depth map dilation iterations",
+                    precision=0,
+                    value=10,
+                    minimum=0,
+                    visible=True,
+                )
+                depth_map_blur_radius = gr.Number(
+                    label="Depth map blur radius",
+                    precision=0,
+                    value=10,
+                    minimum=0,
+                    visible=True,
+                )
+                num_inference_steps = gr.Number(
+                    label="Number inference step: чем больше - тем лучше, но и дольше :)",
+                    precision=0,
+                    value=30,
+                    minimum=5,
+                    visible=True,
+                )
 
     gen_button = gr.Button(value="Generate!", variant="primary")
 
@@ -153,6 +159,7 @@ with gr.Blocks(css=custom_css) as iface:
             positive_prompt,
             negative_prompt,
             seed,
+            num_inference_steps,
             depth_map_feather_threshold,
             depth_map_dilation_iterations,
             depth_map_blur_radius,
