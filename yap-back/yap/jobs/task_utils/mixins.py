@@ -4,7 +4,7 @@ import io
 from minio import Minio
 from sqlalchemy.orm import Session
 
-from yap.orm import session_factory
+from yap.dependencies import session_factory, minio_client
 from yap.adapters import PhotoRepository, init_minio_client
 
 
@@ -12,7 +12,7 @@ from yap.adapters import PhotoRepository, init_minio_client
 
 class S3TaskMixin:
     def _init_s3(self):
-        self._minio_client = init_minio_client()
+        self._minio_client = minio_client
         self._photo_repository = PhotoRepository(self._minio_client)
 
     @property
