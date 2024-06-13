@@ -51,3 +51,7 @@ class PhotoRepository:
             content_type=f"image/{file_type}",
         )
         return result
+
+    def get_photo(self, bucket_name, photo_name) -> bytes:
+        result = self._client.get_object(bucket_name, photo_name)
+        return result.data
