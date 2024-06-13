@@ -1,6 +1,9 @@
-FROM bentoml/model-server:0.13.2-py38-gpu
+FROM nvidia/cuda:12.1.0-cudnn8-devel-ubuntu22.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-distutils \
+    python3-pip \
     ffmpeg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
