@@ -10,6 +10,9 @@ from PIL import Image, ImageFilter
 from scipy.ndimage import binary_dilation
 import numpy as np
 import PIL
+import bentoml
+
+from PIL.Image import Image as PIL_Image
 
 from upscaler import Upscaler
 from segmenter import Segmenter
@@ -18,10 +21,17 @@ from controlnet_sdxl import ControlNet
 from image_utils import ensure_resolution, crop_centered
 import logging
 from typing import Tuple, List
+import cv2
 
-
+@bentoml.service(
+    traffic={"timeout": 600},
+    workers=1,
+    resources={
+        "gpu": 1,
+    }
+)
 class BackgroundReplacer:
-    def __init__(self, device: str = "cuda"):
+    def __init__(self, device: str = "cuda") -> None:
         self.developer_mode = os.getenv("DEV_MODE", False)
 
         self.upscaler = Upscaler(device=device)
@@ -38,7 +48,7 @@ class BackgroundReplacer:
 
     def preprocess(
         self,
-        image: PIL.Image,
+        image: PIL_Image,
         depth_map_feather_threshold: int,
         depth_map_dilation_iterations: int,
         depth_map_blur_radius: int,
@@ -95,9 +105,10 @@ class BackgroundReplacer:
 
         return cropped, masked_depth_map
 
+    @bentoml.api
     def replace_background(
         self,
-        image: PIL.Image,
+        image: PIL_Image,
         description: str,
         positive_prompt: str,
         negative_prompt: str,
@@ -106,9 +117,14 @@ class BackgroundReplacer:
         depth_map_feather_threshold: int = 128,
         depth_map_dilation_iterations: int = 10,
         depth_map_blur_radius: int = 10,
-    ) -> PIL.Image:
+    ) -> PIL_Image:
         pbar = tqdm(total=3)
         
+        arr = np.array(image)
+        arr = cv2.Canny(arr, 100, 200)
+        arr = arr[:, :, None]
+        arr = np.concatenate([arr, arr, arr], axis=2)
+        image = PIL.Image.fromarray(arr)
         cropped, ready_image = self.preprocess(
             image,
             depth_map_feather_threshold=depth_map_feather_threshold,
@@ -151,4 +167,4 @@ class BackgroundReplacer:
 
         logging.info("Done!")
 
-        return composited_images
+        return composited_images[0]
