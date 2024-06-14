@@ -103,6 +103,8 @@ class InpaintPhoto(S3TaskMixin, DBTaskMixin, celery_app.Task):
             started_at=started_at,
             generation_id=generation_request_id,
         )
+        generated = None
+        gen_err = None
         try:
             generated = self._inpainter.process(model_data)
         except Exception as err:
@@ -134,7 +136,3 @@ class InpaintPhoto(S3TaskMixin, DBTaskMixin, celery_app.Task):
 @celery_app.task(base=InpaintPhoto, bind=True, name="inpaint_photo")
 def inpaint_photo(self: InpaintPhoto, generation_request_id: uuid.UUID):
     return self.execute(generation_request_id)
-
-
-# p = InpaintPhoto()
-# p.execute(uuid.UUID("9cf88189-a409-4e41-a8c3-9acdeb9facc9"))

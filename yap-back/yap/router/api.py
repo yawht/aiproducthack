@@ -31,3 +31,10 @@ class CreateGenerationRequest(BaseModel):
     description: str
     negative_prompt: Optional[str]
     input_prompt: Optional[str]
+
+
+class GeneratePromptRequest(BaseModel):
+    description: str
+
+class GeneratePromptResponse(BaseModel):
+    prompt: str
