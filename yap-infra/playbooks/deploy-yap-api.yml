@@ -2,11 +2,24 @@
 - hosts: all
   become: yes
   vars:
-    yap_api_tag: 9504111802
+    yap_api_tag: 9521505205
     yap_cr_path: cr.yandex/crpqi7c93korf1gmhgn1
     yap_api_image: "{{ yap_cr_path }}/yap/back"
     yap_cr_login: oauth
     yap_cr_pass: "secret"
+    env_vars:
+      PG_URL: "postgresql://yap:crackme@127.0.0.1:5432/yap"
+      APP_ENV: "prod"
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      MINIO_ENDPOINT: "127.0.0.1:9091"
+      YC_OAUTH_TOKEN: "secret"
+      YC_FOLDER_ID: "bt1m4kq9p8ojupu1d0co"
+      BENTO_NEGATIVE_PROMPT: "curved lines, ornate, baroque, abstract, grunge, logo, text,word,cropped,low quality,normal quality,username,watermark,signature,blurry,soft,soft line,sketch,ugly,logo,pixelated,lowres"
+          # note, created manually
+      MINIO_ACCESS_KEY: dvB68mlI2enNB8hsHeu9
+      MINIO_SECRET_KEY: AonnuBp3CKUsgvA9MhrOnuOzGqdUOVUEKojAaT9y
+      MINIO_CDN_PATH: https://yawt.ru/cdn
   tasks:
     - name: Login to cr.yandex
       community.docker.docker_login:
@@ -28,8 +41,7 @@
         restart: true
         network_mode: host
         command: yap-db upgrade head
-        env: # see yap_back/yap/settings.py
-          PG_URL: "postgresql://yap:crackme@127.0.0.1:5432/yap"
+        env: "{{ env_vars }}"
     
     - name: Ensure yap_api container is present
       community.docker.docker_container:
@@ -38,17 +50,7 @@
         state: started
         restart: true
         network_mode: host
-        env: # see yap_back/yap/settings.py
-          PG_URL: "postgresql://yap:crackme@127.0.0.1:5432/yap"
-          APP_ENV: "prod"
-          APP_HOST: "0.0.0.0"
-          APP_PORT: "8080"
-          MINIO_ENDPOINT: "127.0.0.1:9091"
-          YC_OAUTH_TOKEN: "secret"
-          # note, created manually
-          MINIO_ACCESS_KEY: dvB68mlI2enNB8hsHeu9
-          MINIO_SECRET_KEY: AonnuBp3CKUsgvA9MhrOnuOzGqdUOVUEKojAaT9y
-          MINIO_CDN_PATH: https://yawt.ru/cdn
+        env: "{{ env_vars }}"
 
     - name: Ensure yap_worker container is present
       community.docker.docker_container:
@@ -58,14 +60,4 @@
         restart: true
         network_mode: host
         command: yap-worker worker
-        env: # see yap_back/yap/settings.py
-          PG_URL: "postgresql://yap:crackme@127.0.0.1:5432/yap"
-          APP_ENV: "prod"
-          APP_HOST: "0.0.0.0"
-          APP_PORT: "8080"
-          MINIO_ENDPOINT: "127.0.0.1:9091"
-          YC_OAUTH_TOKEN: "secret"
-          # note, created manually
-          MINIO_ACCESS_KEY: dvB68mlI2enNB8hsHeu9
-          MINIO_SECRET_KEY: AonnuBp3CKUsgvA9MhrOnuOzGqdUOVUEKojAaT9y
-          MINIO_CDN_PATH: https://yawt.ru/cdn
+        env: "{{ env_vars }}"

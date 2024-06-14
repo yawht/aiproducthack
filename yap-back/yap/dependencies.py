@@ -1,4 +1,4 @@
-import os
+from ollama import Client
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from yap.adapters.photo_repository import PhotoRepository
@@ -9,8 +9,13 @@ from yap.settings import settings
 engine = create_engine(settings.pg_url, connect_args={})
 session_factory = sessionmaker(autocommit=False, bind=engine)
 
-minio_client = create_minio_client(settings.minio_endpoint, settings.minio_access_key, settings.minio_secret_key)
+minio_client = create_minio_client(
+    settings.minio_endpoint, settings.minio_access_key, settings.minio_secret_key
+)
 photo_repo = PhotoRepository(minio_client)
+
+ollama = Client(host=settings.ollama_url)
+
 
 def get_db():
     db = session_factory()
@@ -19,5 +24,10 @@ def get_db():
     finally:
         db.close()
 
+
 def get_photo_repo():
     yield photo_repo
+
+
+def get_ollama_client():
+    yield ollama

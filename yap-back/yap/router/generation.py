@@ -72,6 +72,6 @@ def launch_generation(
         db.query(schema.Generation).where(schema.Generation.uid == generation.uid).one()
     )
     db.commit()
-    task_result = inpaint_photo.delay(res.uid)
+    inpaint_photo.delay(res.uid)
 
     return res
