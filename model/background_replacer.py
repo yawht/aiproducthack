@@ -123,8 +123,8 @@ class BackgroundReplacer:
         arr = np.array(image)
         # arr = cv2.Canny(arr, 100, 200)
         # arr = arr[:, :, None]
-        # arr = np.concatenate([arr, arr, arr], axis=2)
-        image = PIL.Image.fromarray(arr)
+        # arr = np.concatenate([arr, arr, arr, arr], axis=2)
+        image = PIL.Image.fromarray(arr, mode="RGB")
 
         cropped, ready_image = self.preprocess(
             image,
