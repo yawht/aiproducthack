@@ -7,7 +7,7 @@ docker build . -t yaht:0.1
 docker run -d -p 3000:3000 yaht:0.1
 ```
 Запуск приложен требует VRAM >= 11Gb.
-Далее можно обращаться к модели, передавая ей картинку:
+Далее можно обращаться к модели, передавая ей картинку (в данном случае модель развернута в Yandex Datasphere):
 ```bash
 curl -H "x-node-alias: datasphere.user.bento" \
     -H "Authorization: Bearer <IAM_TOKEN>" \
