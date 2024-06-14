@@ -17,8 +17,12 @@ class DepthEstimator:
     ):
         logging.basicConfig(level=logging.INFO)
         logging.info("Initializing depth estimator...")
-        
+
+        if device == "cuda" and not torch.cuda.is_available():
+            logging.warn("CUDA is not available, using CPU...")
+            device = "cpu"
         self.device = device
+
         self.depth_estimator = DPTForDepthEstimation.from_pretrained(
             depth_estimator
         ).to(self.device)

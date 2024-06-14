@@ -33,6 +33,7 @@ import cv2
 class BackgroundReplacer:
     def __init__(self, device: str = "cuda") -> None:
         self.developer_mode = os.getenv("DEV_MODE", False)
+        logging.basicConfig(level=logging.INFO) 
 
         self.upscaler = Upscaler(device=device)
         self.segmenter = Segmenter(device=device)
@@ -121,11 +122,8 @@ class BackgroundReplacer:
         pbar = tqdm(total=3)
         
         arr = np.array(image)
-        # arr = cv2.Canny(arr, 100, 200)
-        # arr = arr[:, :, None]
-        # arr = np.concatenate([arr, arr, arr, arr], axis=2)
-        image = PIL.Image.fromarray(arr, mode="RGB")
-
+        arr = arr[:, :, :3]
+        image = PIL.Image.fromarray(arr.astype('uint8'), mode="RGB")
         cropped, ready_image = self.preprocess(
             image,
             depth_map_feather_threshold=depth_map_feather_threshold,
