@@ -121,10 +121,11 @@ class BackgroundReplacer:
         pbar = tqdm(total=3)
         
         arr = np.array(image)
-        arr = cv2.Canny(arr, 100, 200)
-        arr = arr[:, :, None]
-        arr = np.concatenate([arr, arr, arr], axis=2)
+        # arr = cv2.Canny(arr, 100, 200)
+        # arr = arr[:, :, None]
+        # arr = np.concatenate([arr, arr, arr], axis=2)
         image = PIL.Image.fromarray(arr)
+
         cropped, ready_image = self.preprocess(
             image,
             depth_map_feather_threshold=depth_map_feather_threshold,
