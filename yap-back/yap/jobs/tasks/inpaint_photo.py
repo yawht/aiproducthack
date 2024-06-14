@@ -52,7 +52,7 @@ class Inpainter:
         if settings.yc_oauth_token is not None:
             iam_token = get_iam_token()
             headers["Authorization"] = f"Bearer {iam_token}"
-            headers["x-node-alias"] = settings.yc_node_id
+            headers["x-node-id"] = settings.yc_node_id
             headers["x-folder-id"] = settings.yc_folder_id
 
         files = {
