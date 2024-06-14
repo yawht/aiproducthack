@@ -22,4 +22,4 @@ Product: {req.description}
         prompt=prompt,
         stream=False,
     )
-    return GeneratePromptResponse(prompt=generated.response)
+    return GeneratePromptResponse(prompt=generated["response"]) # God why they cant use dataclasses
