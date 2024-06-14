@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from yap.router.generation import generation_router
+from yap.router.prompt import prompt_router
 from yap.settings import settings
 
 import uvicorn
@@ -13,6 +14,7 @@ def health():
 
 
 app.include_router(generation_router)
+app.include_router(prompt_router)
 
 
 def main():
