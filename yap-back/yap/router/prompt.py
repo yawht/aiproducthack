@@ -13,13 +13,23 @@ def generate_prompt(
     req: GeneratePromptRequest, ollama_client: Client = Depends(get_ollama_client)
 ) -> GeneratePromptResponse:
     prompt = f"""
-You have been provided with a description of a product for the garden. It is necessary to come up with a prompt in English for stable diffusion in order to create a logical background for this object. The resulting photo must be commercial and promotional. You can write about lighting and objects nearby.
+You have been provided with a description of a product for the garden. It is necessary to come up with a prompt in English for stable diffusion in order to create a logical background for this object. The resulting photo must be commercial and promotional. You can write about lighting and objects nearby. 
+
+Product: Шезлонг 100х63х97 см сталь черный/серый
+Prompt: located in the courtyard of the house, on the grass, next to the table, daytime weather, the sun is shining
+
 Product: {req.description}
+Prompt: 
 """
     generated: GenerateResponse = ollama_client.generate(
         model="suzume-llama-3-8B-multilingual-gguf_q8:latest",
         system=settings.ollama_system,
         prompt=prompt,
         stream=False,
+        options={
+            "num_predict": 128,
+            "seed": 0,
+            "temperature": 0.8,
+        }
     )
     return GeneratePromptResponse(prompt=generated["response"]) # God why they cant use dataclasses
