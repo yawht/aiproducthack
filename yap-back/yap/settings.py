@@ -22,6 +22,7 @@ class AppSettings(BaseSettings):
     bento_url: str = os.getenv(
         "BENTO_URL", "https://node-api.datasphere.yandexcloud.net/replace_background"
     )
+    bento_timeout_sec: int = os.getenv("BENTO_TIMEOUT_SECONDS", 120)
     bento_inference_steps: int = os.getenv("BENTO_NUM_INFERENCE", 50)
 
     ollama_url: str = os.getenv("OLLAMA_URL", "http://factorio.info.gf:11434")

@@ -64,7 +64,7 @@ class Inpainter:
         }
 
         response = requests.post(
-            url=settings.bento_url, headers=headers, files=files, timeout=(15, 50)
+            url=settings.bento_url, headers=headers, files=files, timeout=(15, settings.bento_timeout_sec)
         )
 
         return InpainterOutput(response.content, "jpeg")
