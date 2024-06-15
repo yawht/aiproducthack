@@ -22,7 +22,7 @@ Product: {req.description}
 Prompt: 
 """
     generated: GenerateResponse = ollama_client.generate(
-        model="suzume-llama-3-8B-multilingual-gguf_q8:latest",
+        model=settings.ollama_model,
         system=settings.ollama_system,
         prompt=prompt,
         stream=False,

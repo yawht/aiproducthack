@@ -26,6 +26,7 @@ class AppSettings(BaseSettings):
     bento_inference_steps: int = os.getenv("BENTO_NUM_INFERENCE", 50)
 
     ollama_url: str = os.getenv("OLLAMA_URL", "http://factorio.info.gf:11434")
+    ollama_model: str = os.getenv("OLLAMA_MODEL", "suzume-llama-3-8B-multilingual-gguf_q8:latest")
     ollama_system: str = os.getenv("OLLAMA_SYSTEM_PROMPT", "You are the assistant who comes up with prompt for stable diffusion. You need to come up with a prompt to generate the background for the object.")
 
     # Databases
